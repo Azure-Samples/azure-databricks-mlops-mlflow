@@ -1,22 +1,24 @@
-# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.155.1/containers/python-3/.devcontainer/base.Dockerfile
-
-# [Choice] Python version: 3, 3.9, 3.8, 3.7, 3.6
+# See here for image contents: https://github.com/microsoft/vscode-dev-containers/blob/master/containers/python-3-anaconda/.devcontainer/base.Dockerfile
 ARG VARIANT="3"
-FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
+FROM mcr.microsoft.com/vscode/devcontainers/anaconda:0-${VARIANT}
 
-# [Option] Install Node.js
-ARG INSTALL_NODE="true"
-ARG NODE_VERSION="lts/*"
-RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
+# Additional packages
+RUN sudo apt-get update
+RUN sudo apt-get install --reinstall build-essential -y
+
+# Get local user
+ARG USERNAME=vscode
+
+# Change conda to be owned by the local user
+RUN chown -R $USERNAME:$USERNAME /opt/conda
+
+# Activate local user
+USER $USERNAME
+
+# Conda init
+RUN conda init bash
 
 # [Optional] If your pip requirements rarely change, uncomment this section to add them to the image.
-# COPY requirements.txt /tmp/pip-tmp/
-# RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-#    && rm -rf /tmp/pip-tmp
-
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
-
-# [Optional] Uncomment this line to install global node packages.
-# RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
+COPY requirements.txt /tmp/pip-tmp/
+RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
+    && sudo rm -rf /tmp/pip-tmp

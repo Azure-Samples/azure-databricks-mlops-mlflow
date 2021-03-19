@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import find_packages, setup
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
@@ -17,7 +17,7 @@ setup(
     license = "",
     keywords = "",
     url = "",
-    packages=['diabetes'],
-    #long_description=read('README'),
+    package_dir = {'': 'ml_source/src'},
+    packages=find_packages(where="ml_source/src"),
     classifiers=[],
 )
