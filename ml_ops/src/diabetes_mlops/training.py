@@ -1,8 +1,7 @@
-import os
 import pandas as pd
+from diabetes.training.evaluate import get_model_metrics, split_data
 from diabetes.training.train import train_model
-from diabetes.training.evaluate import split_data
-from diabetes.training.evaluate import get_model_metrics
+
 
 def training(train_df: pd.DataFrame) -> None:
     print("Running train.py")

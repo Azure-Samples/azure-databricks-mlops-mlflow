@@ -1,13 +1,15 @@
-from sklearn.linear_model import Ridge
+from typing import Any, Dict
+
 import numpy as np
-from typing import Dict, Any
+from sklearn.linear_model import Ridge
 
 
 def train_model(train_data: Dict[str, np.ndarray], ridge_args: Dict[str, Any]) -> Ridge:
     """Train the model, return the model.
 
     Args:
-        train_data (Dict[np.array]): training data with X key for features and y key labels
+        train_data (Dict[np.array]): training data with X key for
+                                     features and y key labels
         ridge_args (Dict[Any]): ridge classifier arguments
 
     Returns:
