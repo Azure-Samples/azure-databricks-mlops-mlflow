@@ -63,3 +63,7 @@ test-mlops: install-mlops
 test: test-ml test-mlops
 	coverage combine ml_source/.coverage ml_ops/.coverage
 	coverage report
+
+## lint all python src and tests
+lint:
+	flake8 --max-line-length=88 ml_ops/src ml_ops/tests ml_source/src ml_source/tests

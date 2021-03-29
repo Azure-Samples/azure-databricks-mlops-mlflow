@@ -5,7 +5,7 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"context": "..",
-		"args": { 
+		"args": {
 			// Update 'VARIANT'
 			"VARIANT": "3",
 			// Options
@@ -17,19 +17,27 @@
 		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind",
 	],
 	// Set *default* container specific settings.json values on container create.
-	"settings": { 
+	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"python.pythonPath": "/opt/conda/bin/python",
 		"python.linting.enabled": true,
-		"python.linting.pylintEnabled": true,
-		"python.formatting.autopep8Path": "/opt/conda/bin/autopep8",
-		"python.formatting.yapfPath": "/opt/conda/bin/yapf",
+		"python.linting.pylintEnabled": false,
+		"python.linting.flake8Enabled": true,
 		"python.linting.flake8Path": "/opt/conda/bin/flake8",
-		"python.linting.pycodestylePath": "/opt/conda/bin/pycodestyle",
-		"python.linting.pydocstylePath": "/opt/conda/bin/pydocstyle",
-		"python.linting.pylintPath": "/opt/conda/bin/pylint"
+		"python.linting.flake8Args": [
+			"--max-line-length=88"
+		],
+		"python.formatting.provider": "black",
+		"python.formatting.blackPath": "/opt/conda/bin/black",
+		"python.testing.promptToConfigure": false,
+		"[python]": {
+			"editor.formatOnSave": true,
+			"editor.codeActionsOnSave": {
+				"source.organizeImports": true
+			},
+			"files.trimTrailingWhitespace": true
+		},
 	},
-
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-python.python",
@@ -38,13 +46,12 @@
 		"streetsidesoftware.code-spell-checker",
 		"njpwerner.autodocstring"
 	],
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [5000],
-
+	"forwardPorts": [
+		5000
+	],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "python --version",
-
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode"
 }

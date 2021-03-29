@@ -1,8 +1,12 @@
-from diabetes.feature_engineering.data_cleansing import read_data,cal_missing_values,fill_missing_values,remove_categorical_column
-
 import unittest
-import os
-import pandas as pd
+
+from diabetes.feature_engineering.data_cleansing import (
+    cal_missing_values,
+    fill_missing_values,
+    read_data,
+    remove_categorical_column,
+)
+
 
 class TestFeatureEngMethods(unittest.TestCase):
     def test_read_csv(self):
@@ -21,7 +25,7 @@ class TestFeatureEngMethods(unittest.TestCase):
     def test_fill_missing_values(self):
         csv_path = "./tests/diabetes/data/diabetes_unit_test.csv"
         df = read_data(csv_path)
-        processed_df= fill_missing_values(df)
+        processed_df = fill_missing_values(df)
         self.assertEqual(processed_df.shape[1], 11)
 
     def test_remove_categorical_column(self):
@@ -31,6 +35,5 @@ class TestFeatureEngMethods(unittest.TestCase):
         self.assertEqual(processed_df.shape[1], 12)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
