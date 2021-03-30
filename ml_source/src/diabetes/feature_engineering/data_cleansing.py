@@ -28,7 +28,6 @@ def cal_missing_values(df: pd.DataFrame):
     missing_values_count = df.isnull().sum()
     total_missing = missing_values_count.sum()
     percentage_missing = (total_missing / total_cells) * 100
-    print(f"Percentage of Missing Values: {percentage_missing}")
     return percentage_missing
 
 
