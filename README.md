@@ -56,7 +56,10 @@ Deploy Databricks Notebook and ML and MLOps packages.
 
 ## Demo
 
-A demo able setup.
+1. Create Databricks instance and a storage account (ADLS Gen2)
+   1. Create an [Azure Account](https://azure.microsoft.com/en-in/free/)
+   2. [Deploy resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-portal#deploy-resources-from-custom-template) from [custom template](ml_ops/deployment/arm_templates/databricks_and_storage.json)
+2. Create Databricks cluster
 
 ## Repository Structure
 

@@ -1,0 +1,111 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.1",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Resources location."
+            }
+        },
+        "dbWorkspaceName": {
+            "type": "string",
+            "defaultValue": "databricks-mlops-mlflow",
+            "metadata": {
+                "description": "The name of the Azure Databricks workspace to create."
+            }
+        },
+        "dbTier": {
+            "defaultValue": "standard",
+            "type": "string",
+            "allowedValues": [
+                "standard",
+                "premium"
+            ],
+            "metadata": {
+                "description": "The pricing tier of Databricks workspace."
+            }
+        },
+        "stgAccountName": {
+            "type": "string",
+            "defaultValue": "[concat('storage', uniqueString(parameters('location'), resourceGroup().id))]",
+            "metadata": {
+                "description": "Storage account name."
+            }
+        },
+        "stgAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_RAGRS",
+            "metadata": {
+                "description": "Storage account type."
+            }
+        },
+        "stgKind": {
+            "type": "string",
+            "defaultValue": "StorageV2",
+            "metadata": {
+                "description": "Storage account kind."
+            }
+        },
+        "stgAccessTier": {
+            "type": "string",
+            "defaultValue": "Cool",
+            "metadata": {
+                "description": "Storage account tier."
+            }
+        },
+        "stgIsHnsEnabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Enable ADLS Gen2."
+            }
+        }
+    },
+    "variables": {
+        "managedResourceGroupName": "[concat('databricks-rg-', parameters('dbWorkspaceName'), '-', uniqueString(parameters('dbWorkspaceName'), resourceGroup().id))]",
+        "managedResourceGroupId": "[concat(subscription().id, '/resourceGroups/', variables('managedResourceGroupName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Databricks/workspaces",
+            "apiVersion": "2018-04-01",
+            "name": "[parameters('dbWorkspaceName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('dbTier')]"
+            },
+            "comments": "Please do not use an existing resource group for ManagedResourceGroupId.",
+            "properties": {
+                "ManagedResourceGroupId": "[variables('managedResourceGroupId')]",
+                "parameters": {}
+            },
+            "dependsOn": [],
+            "tags": {
+                "Purpose": "Demo",
+                "Project": "azure-databricks-mlops-mlflow"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('stgAccountName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accessTier": "[parameters('stgAccessTier')]",
+                "isHnsEnabled": "[parameters('stgIsHnsEnabled')]"
+            },
+            "dependsOn": [],
+            "sku": {
+                "name": "[parameters('stgAccountType')]"
+            },
+            "kind": "[parameters('stgKind')]",
+            "tags": {
+                "Purpose": "Demo",
+                "Project": "azure-databricks-mlops-mlflow"
+            }
+        }
+    ],
+    "outputs": {}
+}
