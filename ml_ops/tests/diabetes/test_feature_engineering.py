@@ -1,6 +1,8 @@
 import logging
 import os
+import tempfile
 import unittest
+from unittest.mock import MagicMock
 
 import pandas as pd
 from diabetes_mlops.feature_engineering import run
@@ -18,7 +20,7 @@ class TestEvaluateMethods(unittest.TestCase):
         self.logger.info("unittest test_feature_engineering")
         data_file = os.path.join("tests/diabetes/data", "diabetes_unit_test.csv")
         df_input = pd.read_csv(data_file)
-        df_output = run(df_input)
+        df_output = run(df_input, MagicMock(), tempfile.mkdtemp())
 
         assert df_input.shape[0] == df_output.shape[0]
         assert df_input.shape[1] + 1 == df_output.shape[1]

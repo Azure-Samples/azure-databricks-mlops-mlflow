@@ -1,6 +1,7 @@
 import logging
 import os
 import unittest
+from unittest.mock import MagicMock
 
 import pandas as pd
 from diabetes_mlops.training import run
@@ -21,7 +22,7 @@ class TestEvaluateMethods(unittest.TestCase):
             "tests/diabetes/data", "diabetes_unit_test_training.csv"
         )
         train_df = pd.read_csv(data_file)
-        model = run(train_df)
+        model = run(train_df, MagicMock())
 
         assert isinstance(model, Ridge)
 

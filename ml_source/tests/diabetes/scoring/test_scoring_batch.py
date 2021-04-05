@@ -1,10 +1,11 @@
-import unittest
 import os
-import json
-from diabetes.scoring.batch.run import batch_scoring
+import unittest
+
 import pandas as pd
+from diabetes.scoring.batch.run import batch_scoring
 from diabetes.training.evaluate import split_data
 from diabetes.training.train import train_model
+
 
 class TestScoringBatchMethods(unittest.TestCase):
     def test_batch_scoring(self):
