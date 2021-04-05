@@ -7,5 +7,5 @@
 
 ## Current Data
 
-1. [diabetes_raw.csv](./diabetes_raw.csv) : raw data used for training
-2. [diabetes_batch_input.csv](./diabetes_batch_input.csv) : sample data for batch prediction
+1. [data_raw.csv](./data_raw.csv) : raw data used for training
+2. [data_batch_input.csv](./data_batch_input.csv) : sample data for batch prediction

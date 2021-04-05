@@ -1,11 +1,8 @@
-
-import json
-import numpy
 import pandas as pd
 from sklearn.linear_model import Ridge
-from diabetes.feature_engineering.data_cleansing import perform_data_cleansing
 
-def batch_scoring(model:Ridge, df: pd.DataFrame ) -> str:
+
+def batch_scoring(model: Ridge, df: pd.DataFrame) -> str:
     """[Batch scoring method]
 
     Args:
