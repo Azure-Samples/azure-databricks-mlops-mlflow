@@ -20,13 +20,12 @@ This is a template or sample for [MlOps](https://github.com/microsoft/mlops) for
 
 ## Features
 
-This template or sample provides the following features:
+This template with samples that provides the following features:
 
 - A way to run Python based MlOps without using [MLflow Project](https://mlflow.org/docs/latest/projects.html#), but still using [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/) for managing the end-to-end machine learning lifecycle.
 - Sample of machine learning source code structure along with Unit Test cases
 - Sample of MLOps code structure along with Unit Test cases
-- Sample of [Nutter](https://github.com/microsoft/nutter) based Integration Test cases
-- Demo setup
+- Demo setup to try on users subscription
 
 ## Getting Started
 
@@ -61,14 +60,14 @@ This template or sample provides the following features:
    2. [Deploy resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-portal#deploy-resources-from-custom-template) from [custom template](ml_ops/deployment/arm_templates/databricks_and_storage.json)
 2. Initialize Databricks (create cluster, base workspace, mlflow experiment, secret scope)
    1. Get [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/) Host and Token
-   2. Authenticate Databricks CLI `make databricks-authenticate` - `[^7]`
+   2. Authenticate Databricks CLI `make databricks-authenticate`
    3. Execute `make databricks-init`
 3. Create Azure Data Lake Storage Gen2 Container and upload data
-   1. [Create]((https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container)) Azure Data Lake Storage Gen2 Container named - `diabetes`
+   1. [Create](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) Azure Data Lake Storage Gen2 Container named - `diabetes`
    2. [Upload](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#upload-a-block-blob) as blob [diabetes data files](./ml_data/) into Azure Data Lake Storage Gen2 container named - `diabetes`
 4. Put secrets to [Mount ADLS Gen2 Storage using Shared Access Key](https://docs.microsoft.com/en-gb/azure/databricks/data/data-sources/azure/azure-storage)
-   1. Get [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) account name
-   2. Get [Shared Key](https://docs.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key) for [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) account
+   1. Get Azure Data Lake Storage Gen2 account name created in step 1
+   2. Get [Shared Key](https://docs.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key) for Azure Data Lake Storage Gen2 account
    3. Execute `make databricks-secrets-put` to put secret in Databricks secret scope
 
 ## Repository Structure
@@ -88,3 +87,4 @@ This template or sample provides the following features:
 5. [Databricks Widgets](https://docs.databricks.com/notebooks/widgets.html)
 6. [Databricks Notebook-scoped Python libraries](https://docs.databricks.com/libraries/notebooks-python-libraries.html)
 7. [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/)
+8. [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)
