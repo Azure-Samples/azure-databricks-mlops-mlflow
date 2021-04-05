@@ -136,5 +136,8 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Local files
 **/.DS_Store
 .vscode/settings.json
+mlruns
