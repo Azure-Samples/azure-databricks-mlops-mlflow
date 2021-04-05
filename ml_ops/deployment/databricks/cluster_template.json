@@ -1,0 +1,17 @@
+{
+    "cluster_name": "azure-databricks-mlops-mlflow",
+    "spark_version": "8.1.x-cpu-ml-scala2.12",
+    "num_workers": 0,
+    "spark_conf": {
+        "spark.databricks.cluster.profile": "singleNode",
+        "spark.databricks.conda.condaMagic.enabled": "true",
+        "spark.master": "local[*]"
+    },
+    "node_type_id": "Standard_F4s",
+    "driver_node_type_id": "Standard_F4s",
+    "custom_tags": {
+        "ResourceClass": "SingleNode"
+    },
+    "autotermination_minutes": 30,
+    "enable_elastic_disk": true
+}

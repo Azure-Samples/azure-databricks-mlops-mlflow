@@ -32,7 +32,8 @@ This template or sample provides the following features:
 
 ### Prerequisites
 
-- [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) instance
+- [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) workspace
+- [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) account
 - [Visual Studio Code](https://code.visualstudio.com/) in local environment for development
 - [Docker](https://www.docker.com/) in local environment for development
 
@@ -44,22 +45,31 @@ This template or sample provides the following features:
 4. Open a [terminal](https://code.visualstudio.com/docs/remote/containers#_opening-a-terminal) in Remote Container from Visual Studio Code
 5. `make install` to install sample packages (`diabetes` and `diabetes_mlops`) locally
 6. `make test` to Unit Test the code locally
-7. `make dist` to build wheel packages (`diabetes` and `diabetes_mlops`) locally
 
 ### Package
 
-Package ML and MLOps.
+1. `make dist` to build wheel Ml and MLOps packages (`diabetes` and `diabetes_mlops`) locally
 
 ### Deployment
 
-Deploy Databricks Notebook and ML and MLOps packages.
+1. `make databricks-deploy` to deploy Databricks Orchestrator Notebooks and ML and MLOps Python wheel packages.
 
 ## Demo
 
-1. Create Databricks instance and a storage account (ADLS Gen2)
+1. Create Databricks workspace and a storage account (Azure Data Lake Storage Gen2)
    1. Create an [Azure Account](https://azure.microsoft.com/en-in/free/)
    2. [Deploy resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-portal#deploy-resources-from-custom-template) from [custom template](ml_ops/deployment/arm_templates/databricks_and_storage.json)
-2. Create Databricks cluster
+2. Initialize Databricks (create cluster, base workspace, mlflow experiment, secret scope)
+   1. Get [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/) Host and Token
+   2. Authenticate Databricks CLI `make databricks-authenticate` - `[^7]`
+   3. Execute `make databricks-init`
+3. Create Azure Data Lake Storage Gen2 Container and upload data
+   1. [Create]((https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container)) Azure Data Lake Storage Gen2 Container named - `diabetes`
+   2. [Upload](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#upload-a-block-blob) as blob [diabetes data files](./ml_data/) into Azure Data Lake Storage Gen2 container named - `diabetes`
+4. Put secrets to [Mount ADLS Gen2 Storage using Shared Access Key](https://docs.microsoft.com/en-gb/azure/databricks/data/data-sources/azure/azure-storage)
+   1. Get [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) account name
+   2. Get [Shared Key](https://docs.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key) for [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) account
+   3. Execute `make databricks-secrets-put` to put secret in Databricks secret scope
 
 ## Repository Structure
 
@@ -77,3 +87,4 @@ Deploy Databricks Notebook and ML and MLOps packages.
 4. [Run MLflow Projects on Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/projects)
 5. [Databricks Widgets](https://docs.databricks.com/notebooks/widgets.html)
 6. [Databricks Notebook-scoped Python libraries](https://docs.databricks.com/libraries/notebooks-python-libraries.html)
+7. [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/)

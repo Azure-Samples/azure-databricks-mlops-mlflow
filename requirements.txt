@@ -3,3 +3,5 @@ pandas
 black
 coverage
 flask
+databricks-cli
+mlflow

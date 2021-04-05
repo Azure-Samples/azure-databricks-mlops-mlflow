@@ -67,3 +67,51 @@ test: test-ml test-mlops
 ## lint all python src and tests
 lint:
 	flake8 --max-line-length=88 ml_ops/src ml_ops/tests ml_source/src ml_source/tests
+
+## databricks authenticate
+databricks-authenticate:
+	$(info Authenticate Databricks CLI)
+	$(info Follow https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/ for getting Host and token value)
+	databricks configure --token
+	$(info Taking Backup of .databrickscfg file in .env/databrickscfg)
+	cp ~/.databrickscfg .env/.databrickscfg
+	$(info Creating env script file for mlflow)
+	DATABRICKS_HOST="$$(cat ~/.databrickscfg | grep '^host' | cut -d' ' -f 3)"; \
+	DATABRICKS_TOKEN="$$(cat ~/.databrickscfg | grep '^token' | cut -d' ' -f 3)"; \
+	echo "export MLFLOW_TRACKING_URI=databricks"> .env/.databricks_env.sh; \
+	echo "export DATABRICKS_HOST=$$DATABRICKS_HOST" >> .env/.databricks_env.sh; \
+	echo "export DATABRICKS_TOKEN=$$DATABRICKS_TOKEN" >> .env/.databricks_env.sh
+
+## databricks init (create cluster, base workspace, mlflow experiment, secret scope)
+databricks-init:
+	$(info Creating databricks cluster)
+	databricks clusters create --json-file ml_ops/deployment/databricks/cluster_template.json
+	$(info Creating databricks workspace root directory)
+	databricks workspace mkdirs /azure-databricks-mlops-mlflow
+	$(info Creating databricks dbfs root directory)
+	databricks fs mkdirs dbfs:/FileStore/libraries/azure-databricks-mlops-mlflow
+	$(info Creating databricks secret scope)
+	databricks secrets create-scope --scope azure-databricks-mlops-mlflow --initial-manage-principal users
+	$(info Creating mlflow experiment in databricks workspace root directory)
+	source .env/.databricks_env.sh && mlflow experiments create --experiment-name /azure-databricks-mlops-mlflow/Experiment
+
+## databricks secrets put
+databricks-secrets-put:
+	$(info Put databricks secret azure-blob-storage-account-name)
+	@read -p "Enter Azure Blob storage Account Name: " stg_account_name; \
+	databricks secrets put --scope azure-databricks-mlops-mlflow --key azure-blob-storage-account-name --string-value $$stg_account_name
+	$(info Put databricks secret azure-blob-storage-container-name)
+	@read -p "Enter Azure Blob storage Container Name: " stg_container_name; \
+	databricks secrets put --scope azure-databricks-mlops-mlflow --key azure-blob-storage-container-name --string-value $$stg_container_name
+	$(info Put databricks secret azure-shared-access-key)
+	$(info Mount Blob Storage https://docs.microsoft.com/en-gb/azure/databricks/data/data-sources/azure/azure-storage)
+	@read -p "Enter Azure Blob storage Shared Access Key: " shared_access_key; \
+	databricks secrets put --scope azure-databricks-mlops-mlflow --key azure-blob-storage-shared-access-key --string-value $$shared_access_key
+
+## databricks deploy (upload wheel pacakges to databricks DBFS workspace)
+databricks-deploy: dist
+	$(info Upload wheel packages into databricks dbfs root directory)
+	databricks fs cp --overwrite --recursive dist/ dbfs:/FileStore/libraries/azure-databricks-mlops-mlflow/
+	$(info Importing orchestrator notebooks into databricks workspace root directory)
+	databricks workspace import_dir --overwrite ml_ops/orchestrator/ /azure-databricks-mlops-mlflow/
+	$(info Create or update databricks jobs)
