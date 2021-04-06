@@ -28,10 +28,12 @@ clean: clean-build clean-pyc clean-test
 ## pcakage ml
 dist-ml: clean
 	python ml_source/src/setup.py bdist_wheel
+	rm -fr build/
 
 ## pcakage mlops
 dist-mlops: clean
 	python ml_ops/src/setup.py bdist_wheel
+	rm -fr build/
 
 ## pcakage all
 dist: dist-ml dist-mlops
@@ -39,10 +41,12 @@ dist: dist-ml dist-mlops
 ## install ml locally
 install-ml: clean
 	python ml_source/src/setup.py install
+	rm -fr build/
 
 ## install mlops locally
 install-mlops: clean
 	python ml_ops/src/setup.py install
+	rm -fr build/
 
 ## install all locally
 install: install-ml install-mlops

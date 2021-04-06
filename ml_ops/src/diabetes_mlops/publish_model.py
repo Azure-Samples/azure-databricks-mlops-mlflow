@@ -5,7 +5,9 @@ from mlflow.entities.model_registry import ModelVersion
 from sklearn.linear_model import Ridge
 
 
-def run(trained_model: Ridge, mlflow: mlflow, model_name="diabetes") -> ModelVersion:
+def run(
+    trained_model: Ridge, mlflow: mlflow, model_name: str = "diabetes"
+) -> ModelVersion:
     """MLOps publish model in mlflow model registry - entry point.
 
     Args:
@@ -29,10 +31,12 @@ def run(trained_model: Ridge, mlflow: mlflow, model_name="diabetes") -> ModelVer
 
     logger.info("Publishing trained model into mlflow model registry")
     model_details = mlflow.register_model(model_uri=model_uri, name=model_name)
-    model_versions = model_details.version
+    model_version = model_details.version
 
-    mlflow.log_param("model_versions", model_versions)
-    logger.info(f"published model name: {model_name}, version: {model_versions}")
+    mlflow.log_param("model_version", model_version)
+    mlflow.log_param("model_name", model_name)
+
+    logger.info(f"published model name: {model_name}, version: {model_version}")
     logger.info("Completed MLOps publish model")
 
     return model_details
