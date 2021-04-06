@@ -1,0 +1,23 @@
+{
+    "job_id": "FILL_JOB_ID",
+    "name": "diabetes_batch_scoring",
+    "existing_cluster_id": "FILL_CLUSTER_ID",
+    "notebook_task": {
+        "notebook_path": "/azure-databricks-mlops-mlflow/diabetes_orchestrator_batch_score",
+        "base_parameters": {
+            "diabetes_mount_point": "/mnt/data_batch",
+            "diabetes_scoring_data_file": "data_batch_input.csv",
+            "mlflow_experiment_id": "FILL_MLFLOW_EXPERIMENT_ID",
+            "trained_model_version": "",
+            "wheel_package_dbfs_base_path": "/dbfs/FileStore/libraries/azure-databricks-mlops-mlflow",
+            "wheel_package_diabetes_version": "0.0.1",
+            "wheel_package_diabetes_mlops_version": "0.0.1"
+        }
+    },
+    "timeout_seconds": 86400,
+    "email_notifications": {
+        "on_start": [],
+        "on_success": [],
+        "on_failure": []
+    }
+}

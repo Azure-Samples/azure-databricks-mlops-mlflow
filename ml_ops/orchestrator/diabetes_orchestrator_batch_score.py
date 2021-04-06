@@ -25,6 +25,7 @@ dbutils = get_dbutils(spark)
 dbutils.widgets.text("diabetes_mount_point", "/mnt/data")
 dbutils.widgets.text("diabetes_scoring_data_file", "data_batch_input.csv")
 dbutils.widgets.text("mlflow_experiment_id", "")
+dbutils.widgets.text("trained_model_version", "")
 dbutils.widgets.text("wheel_package_dbfs_base_path", "")
 dbutils.widgets.text("wheel_package_diabetes_version", "")
 dbutils.widgets.text("wheel_package_diabetes_mlops_version", "")
@@ -62,6 +63,7 @@ from diabetes_mlops.scoring_batch import run as run_scoring_batch  # noqa: E402
 mlflow_experiment_id = dbutils.widgets.get("mlflow_experiment_id")
 diabetes_mount_point = dbutils.widgets.get("diabetes_mount_point")
 diabetes_scoring_data_file = dbutils.widgets.get("diabetes_scoring_data_file")
+trained_model_version = dbutils.widgets.get("trained_model_version")
 
 # COMMAND ----------
 
@@ -131,7 +133,14 @@ mlflow.log_param("data_feature_engineered_cols", feature_engineered_data.shape[1
 # COMMAND ----------
 
 # Load published model (latest version)
-trained_model = run_load_model(mlflow=mlflow, model_version=None, model_name="diabetes")
+if trained_model_version == "":
+    trained_model = run_load_model(
+        mlflow=mlflow, model_version=None, model_name="diabetes"
+    )
+else:
+    trained_model = run_load_model(
+        mlflow=mlflow, model_version=trained_model_version, model_name="diabetes"
+    )
 
 # COMMAND ----------
 

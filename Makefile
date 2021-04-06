@@ -113,9 +113,78 @@ databricks-secrets-put:
 	databricks secrets put --scope azure-databricks-mlops-mlflow --key azure-blob-storage-shared-access-key --string-value $$shared_access_key
 
 ## databricks deploy (upload wheel pacakges to databricks DBFS workspace)
-databricks-deploy: dist
+databricks-deploy-code: dist
 	$(info Upload wheel packages into databricks dbfs root directory)
 	databricks fs cp --overwrite --recursive dist/ dbfs:/FileStore/libraries/azure-databricks-mlops-mlflow/
 	$(info Importing orchestrator notebooks into databricks workspace root directory)
 	databricks workspace import_dir --overwrite ml_ops/orchestrator/ /azure-databricks-mlops-mlflow/
 	$(info Create or update databricks jobs)
+
+## databricks deploy jobs (create databricks jobs)
+databricks-deploy-jobs: databricks-deploy-code
+	$(info Getting required values from databricks)
+	CLUSTER_ID="$$(databricks clusters list --output json | \
+				   jq ".clusters[] | select(.cluster_name == \"azure-databricks-mlops-mlflow\") | .cluster_id")"; \
+	echo "Got existing cluster id: $$CLUSTER_ID"; \
+	TRAINING_JOB_ID="$$(databricks jobs list --output json | \
+						jq ".jobs[] | select(.settings.name == \"diabetes_model_training\") | .job_id")"; \
+	echo "Got existing diabetes_model_training job id: $$TRAINING_JOB_ID"; \
+	if [[ "$$TRAINING_JOB_ID" == "" ]]; then \
+		databricks jobs create --json "{\"name\": \"diabetes_model_training\", \"existing_cluster_id\": $$CLUSTER_ID}"; \
+		TRAINING_JOB_ID="$$(databricks jobs list --output json | \
+							jq ".jobs[] | select(.settings.name == \"diabetes_model_training\") | .job_id")"; \
+		echo "Created diabetes_model_training with job id: $$TRAINING_JOB_ID"; \
+	fi; \
+	BATCH_SCORING_JOB_ID="$$(databricks jobs list --output json | \
+							 jq ".jobs[] | select(.settings.name == \"diabetes_batch_scoring\") | .job_id")"; \
+	echo "Got existing diabetes_batch_scoring job id: $$BATCH_SCORING_JOB_ID"; \
+	if [[ "$$BATCH_SCORING_JOB_ID" == "" ]]; then \
+		databricks jobs create --json "{\"name\": \"diabetes_batch_scoring\", \"existing_cluster_id\": $$CLUSTER_ID}"; \
+		BATCH_SCORING_JOB_ID="$$(databricks jobs list --output json | \
+								 jq ".jobs[] | select(.settings.name == \"diabetes_batch_scoring\") | .job_id")"; \
+		echo "Created diabetes_batch_scoring with job id: $$BATCH_SCORING_JOB_ID"; \
+	fi; \
+	MLFLOW_EXPERIMENT_ID="$$(source .env/.databricks_env.sh && mlflow experiments list | \
+							 grep '/azure-databricks-mlops-mlflow/Experiment' | \
+							 cut -d' ' -f 1)"; \
+	echo "Got existing mlflow experiment id: $$MLFLOW_EXPERIMENT_ID"; \
+	echo "Updating diabetes_model_training by using template ml_ops/deployment/databricks/job_template_diabetes_training.json"; \
+	TRAINING_JOB_UPDATE_JSON="$$(cat ml_ops/deployment/databricks/job_template_diabetes_training.json | \
+								 sed "s/\"FILL_JOB_ID\"/$$TRAINING_JOB_ID/" | \
+								 sed "s/FILL_MLFLOW_EXPERIMENT_ID/$$MLFLOW_EXPERIMENT_ID/" | \
+								 sed "s/\"FILL_CLUSTER_ID\"/$$CLUSTER_ID/")"; \
+	databricks jobs reset --job-id $$TRAINING_JOB_ID --json "$$TRAINING_JOB_UPDATE_JSON"; \
+	echo "Updating diabetes_batch_scoring by using template ml_ops/deployment/databricks/job_template_diabetes_batch_scoring.json"; \
+	BATCH_SCORING_JOB_UPDATE_JSON="$$(cat ml_ops/deployment/databricks/job_template_diabetes_batch_scoring.json | \
+								 sed "s/\"FILL_JOB_ID\"/$$BATCH_SCORING_JOB_ID/" | \
+								 sed "s/FILL_MLFLOW_EXPERIMENT_ID/$$MLFLOW_EXPERIMENT_ID/" | \
+								 sed "s/\"FILL_CLUSTER_ID\"/$$CLUSTER_ID/")"; \
+	databricks jobs reset --job-id $$BATCH_SCORING_JOB_ID --json "$$BATCH_SCORING_JOB_UPDATE_JSON"; \
+
+## deploy databricks all
+deploy: databricks-deploy-jobs
+
+## run databricks diabetes_model_training job
+run-diabetes-model-training:
+	$(info Triggering model training job)
+	TRAINING_JOB_ID="$$(databricks jobs list --output json | \
+						jq ".jobs[] | select(.settings.name == \"diabetes_model_training\") | .job_id")"; \
+	RUN_ID="$$(databricks jobs run-now --job-id $$TRAINING_JOB_ID | \
+			   jq ".number_in_job")"; \
+	DATABRICKS_HOST="$$(cat ~/.databrickscfg | grep '^host' | cut -d' ' -f 3)"; \
+	DATABRICKS_ORG_ID="$$(echo $$DATABRICKS_HOST | cut -d'-' -f 2 | cut -d'.' -f 1)"; \
+	echo "Open the following link in browser to check result -"; \
+	echo "$$DATABRICKS_HOST/?o=$$DATABRICKS_ORG_ID/#job/$$TRAINING_JOB_ID/run/$$RUN_ID"; \
+
+	
+## run databricks diabetes_batch_scoring job
+run-diabetes-batch-scoring:
+	$(info Triggering batch scoring job)
+	BATCH_SCORING_JOB_ID="$$(databricks jobs list --output json | \
+							 jq ".jobs[] | select(.settings.name == \"diabetes_batch_scoring\") | .job_id")"; \
+	RUN_ID="$$(databricks jobs run-now --job-id $$BATCH_SCORING_JOB_ID | \
+			   jq ".number_in_job")"; \
+	DATABRICKS_HOST="$$(cat ~/.databrickscfg | grep '^host' | cut -d' ' -f 3)"; \
+	DATABRICKS_ORG_ID="$$(echo $$DATABRICKS_HOST | cut -d'-' -f 2 | cut -d'.' -f 1)"; \
+	echo "Open the following link in browser to check result -"; \
+	echo "$$DATABRICKS_HOST/?o=$$DATABRICKS_ORG_ID/#job/$$BATCH_SCORING_JOB_ID/run/$$RUN_ID"; \
