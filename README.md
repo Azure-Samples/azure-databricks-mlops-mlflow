@@ -53,12 +53,15 @@ This template with samples that provides the following features:
 
 ### Deployment
 
-1. `make databricks-deploy-code` to deploy Databricks Orchestrator Notebooks, ML and MLOps Python wheel packages.
+1. `make databricks-deploy-code` to deploy Databricks Orchestrator Notebooks, ML and MLOps Python wheel packages. If any code changes.
+2. `make databricks-deploy-jobs` to deploy Databricks Jobs. If any changes in job specs.
 
 ### Run training and batch scoring
 
 1. To trigger training, execute `make run-diabetes-model-training`
 2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
+
+**NOTE:** for [deployment](#deployment) and [running](#run-training-and-batch-scoring) the Databricks environment should be created first, for creating a demo environment the [Demo](#demo) chapter can be followed.
 
 ## Demo
 
