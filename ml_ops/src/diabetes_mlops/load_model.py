@@ -24,13 +24,15 @@ def run(
 
     client = mlflow.tracking.MlflowClient()
     if model_version is None:
-        model_version_object_list = client.get_latest_versions(model_name)
+        model_version_object_list = client.get_latest_versions(
+            model_name, stages=["None"]
+        )
         if len(model_version_object_list) == 0:
             logger.error(f"There is no Model registered with this name: {model_name}")
             return None
         model_version = model_version_object_list[0].version
 
-    mlflow.log_param("model_versions", model_version)
+    mlflow.log_param("model_version", model_version)
     mlflow.log_param("model_name", model_name)
 
     model_uri = "models:/{model_name}/{model_version}".format(

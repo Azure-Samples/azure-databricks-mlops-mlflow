@@ -120,7 +120,10 @@ mlflow.log_param("data_raw_cols", raw_data.shape[1])
 # Run feature engineering on batch scoring raw data
 logger.info("Stating feature engineering")
 feature_engineered_data = run_feature_engineering(
-    df_input=raw_data, mlflow=mlflow, mlflow_log_tmp_dir=mlflow_log_tmp_dir
+    df_input=raw_data,
+    mlflow=mlflow,
+    mlflow_log_tmp_dir=mlflow_log_tmp_dir,
+    explain_features=False,
 )
 mlflow.log_param("data_feature_engineered_rows", feature_engineered_data.shape[0])
 mlflow.log_param("data_feature_engineered_cols", feature_engineered_data.shape[1])
