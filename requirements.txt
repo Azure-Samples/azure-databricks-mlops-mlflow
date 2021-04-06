@@ -5,3 +5,6 @@ coverage
 flask
 databricks-cli
 mlflow
+opencensus-ext-azure==1.0.7
+protobuf==3.15.3
+opencensus-ext-logging==0.1.0
