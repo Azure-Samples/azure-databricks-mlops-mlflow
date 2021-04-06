@@ -1,8 +1,9 @@
+import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge
 
 
-def batch_scoring(model: Ridge, df: pd.DataFrame) -> str:
+def batch_scoring(model: Ridge, df: pd.DataFrame) -> np.array:
     """[Batch scoring method]
 
     Args:
@@ -10,9 +11,7 @@ def batch_scoring(model: Ridge, df: pd.DataFrame) -> str:
         df (pd.DataFrame): [Input dataframe for prediction]
 
     Returns:
-        str: [description]
+        np.array : Returns predicted values, shape (n_samples,)
     """
-    # TODO -- Add data cleansing here
-    # df = perform_data_cleansing(df)
     result = model.predict(df.values)
     return result

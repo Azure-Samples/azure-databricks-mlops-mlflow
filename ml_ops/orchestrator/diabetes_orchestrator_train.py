@@ -109,7 +109,7 @@ else:
 # COMMAND ----------
 
 # Get training raw data
-logger.info("Reading raw data")
+logger.info("Reading training raw data")
 raw_data_file = "/dbfs/" + diabetes_mount_point + "/" + diabetes_training_data_file
 raw_data = pd.read_csv(raw_data_file)
 mlflow.log_param("data_raw_rows", raw_data.shape[0])
