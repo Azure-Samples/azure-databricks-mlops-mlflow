@@ -53,7 +53,12 @@ This template with samples that provides the following features:
 
 ### Deployment
 
-1. `make databricks-deploy` to deploy Databricks Orchestrator Notebooks and ML and MLOps Python wheel packages.
+1. `make databricks-deploy-code` to deploy Databricks Orchestrator Notebooks, ML and MLOps Python wheel packages.
+
+### Run training and batch scoring
+
+1. To trigger training, execute `make run-diabetes-model-training`
+2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
 
 ## Demo
 
@@ -71,6 +76,11 @@ This template with samples that provides the following features:
    1. Get Azure Data Lake Storage Gen2 account name created in step 1
    2. Get [Shared Key](https://docs.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key) for Azure Data Lake Storage Gen2 account
    3. Execute `make databricks-secrets-put` to put secret in Databricks secret scope
+5. Package and deploy into Databricks (Databricks Jobs, Orchestrator Notebooks, ML and MLOps Python wheel packages)
+   1. Execute `make deploy`
+6. Run Databricks Jobs
+   1. To trigger training, execute `make run-diabetes-model-training`
+   2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
 
 ## Repository Structure
 
