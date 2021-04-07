@@ -88,16 +88,32 @@ databricks-authenticate:
 
 ## databricks init (create cluster, base workspace, mlflow experiment, secret scope)
 databricks-init:
-	$(info Creating databricks cluster)
-	databricks clusters create --json-file ml_ops/deployment/databricks/cluster_template.json
-	$(info Creating databricks workspace root directory)
-	databricks workspace mkdirs /azure-databricks-mlops-mlflow
-	$(info Creating databricks dbfs root directory)
-	databricks fs mkdirs dbfs:/FileStore/libraries/azure-databricks-mlops-mlflow
-	$(info Creating databricks secret scope)
-	databricks secrets create-scope --scope azure-databricks-mlops-mlflow --initial-manage-principal users
-	$(info Creating mlflow experiment in databricks workspace root directory)
-	source .env/.databricks_env.sh && mlflow experiments create --experiment-name /azure-databricks-mlops-mlflow/Experiment
+	echo "Creating databricks workspace root directory"; \
+	databricks workspace mkdirs /azure-databricks-mlops-mlflow; \
+	echo "Creating databricks dbfs root directory"; \
+	databricks fs mkdirs dbfs:/FileStore/libraries/azure-databricks-mlops-mlflow; \
+	CLUSTER_ID="$$(databricks clusters list --output json | \
+				   jq ".clusters[] | select(.cluster_name == \"azure-databricks-mlops-mlflow\") | .cluster_id")"; \
+	echo "Got existing cluster azure-databricks-mlops-mlflow with id: $$CLUSTER_ID"; \
+	if [[ $$CLUSTER_ID == "" ]]; then \
+		echo "Creating databricks cluster azure-databricks-mlops-mlflow"; \
+		databricks clusters create --json-file ml_ops/deployment/databricks/cluster_template.json; \
+	fi; \
+	SECRET_SCOPE_NAME="$$(databricks secrets list-scopes --output json | \
+				   jq ".scopes[] | select(.name == \"azure-databricks-mlops-mlflow\") | .name")"; \
+	echo "Got existing secret scope $$SECRET_SCOPE_NAME"; \
+	if [[ $$SECRET_SCOPE_NAME == "" ]]; then \
+		echo "Creating databricks secret scope azure-databricks-mlops-mlflow"; \
+		databricks secrets create-scope --scope azure-databricks-mlops-mlflow --initial-manage-principal users; \
+	fi; \
+	MLFLOW_EXPERIMENT_ID="$$(source .env/.databricks_env.sh && mlflow experiments list | \
+							 grep '/azure-databricks-mlops-mlflow/Experiment' | \
+							 cut -d' ' -f 1)"; \
+	echo "Got existing mlflow experiment id: $$MLFLOW_EXPERIMENT_ID"; \
+	if [[ "$$MLFLOW_EXPERIMENT_ID" == "" ]]; then \
+		echo "Creating mlflow experiment in databricks workspace /azure-databricks-mlops-mlflow/Experiment directory"; \
+		source .env/.databricks_env.sh && mlflow experiments create --experiment-name /azure-databricks-mlops-mlflow/Experiment; \
+	fi; \
 
 ## databricks secrets put
 databricks-secrets-put:
