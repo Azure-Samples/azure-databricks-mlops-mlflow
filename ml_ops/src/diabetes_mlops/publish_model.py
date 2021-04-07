@@ -26,8 +26,9 @@ def run(
     logger.info("Running MLOps publish model")
 
     temp_model_dir = tempfile.mkdtemp()
-    mlflow.sklearn.save_model(trained_model, os.path.join(temp_model_dir, model_name))
-    mlflow.log_artifact(model_name)
+    model_path = os.path.join(temp_model_dir, model_name)
+    mlflow.sklearn.save_model(trained_model, model_path)
+    mlflow.log_artifact(model_path)
     model_uri = "runs:/{run_id}/{artifact_path}".format(
         run_id=mlflow.active_run().info.run_id, artifact_path=model_name
     )
