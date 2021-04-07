@@ -29,6 +29,14 @@ This template with samples that provides the following features:
 
 ## Architecture
 
+### Model Training
+
+![Model Training](docs/images/model_training.png)
+
+### Batch Scoring
+
+![Batch Scoring](docs/images/batch_scoring.png)
+
 ## Getting Started
 
 ### Prerequisites
