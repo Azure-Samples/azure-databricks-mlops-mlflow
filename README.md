@@ -67,7 +67,7 @@ This template with samples that provides the following features:
 
 1. Create Databricks workspace and a storage account (Azure Data Lake Storage Gen2)
    1. Create an [Azure Account](https://azure.microsoft.com/en-in/free/)
-   2. [Deploy resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-portal#deploy-resources-from-custom-template) from [custom template](ml_ops/deployment/arm_templates/databricks_and_storage.json)
+   2. [Deploy resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-portal#deploy-resources-from-custom-template) from [custom ARM template](ml_ops/deployment/arm_templates/databricks_and_storage.json)
 2. Initialize Databricks (create cluster, base workspace, mlflow experiment, secret scope)
    1. Get [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/) Host and Token
    2. Authenticate Databricks CLI `make databricks-authenticate`
