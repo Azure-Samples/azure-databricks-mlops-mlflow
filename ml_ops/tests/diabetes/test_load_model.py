@@ -15,15 +15,21 @@ class TestEvaluateMethods(unittest.TestCase):
         level=logging.INFO,
     )
 
+    @patch("mlflow.tracking.MlflowClient")
     @patch("mlflow.sklearn.load_model")
     @patch("mlflow.log_param")
     @patch("mlflow.active_run")
-    def test_load_model_none_version_patch_mlflow(
-        self, mock_mlflow_active_run, mock_mlflow_log_param, mock_mlflow_load_model
+    def test_load_model(
+        self,
+        mock_mlflow_active_run,
+        mock_mlflow_log_param,
+        mock_mlflow_load_model,
+        mock_mlflow_client,
     ):
         self.logger.info("unittest test_load_model")
         mock_mlflow_active_run.return_value = MagicMock()
         mock_mlflow_load_model.return_value = Ridge()
+        mock_mlflow_client.return_value.get_latest_versions.return_value = [MagicMock()]
         model = run(mlflow)
         assert isinstance(model, Ridge)
 
