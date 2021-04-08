@@ -10,6 +10,7 @@ from setuptools import find_packages, setup
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 requirements_file_name = "requirements.txt"
 with open(requirements_file_name) as f:
     required_packages = f.read().splitlines()

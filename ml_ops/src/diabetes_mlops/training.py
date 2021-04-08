@@ -4,14 +4,17 @@ import mlflow
 import pandas as pd
 from diabetes.training.evaluate import get_model_metrics, split_data
 from diabetes.training.train import train_model
-from sklearn.linear_model import Ridge
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
+from sklearn.linear_model import Ridge
 
-def run(train_df: pd.DataFrame, 
-        mlflow: mlflow,
-        app_logger: AppLogger = get_disabled_logger(),
-        parent_tracer: Tracer = None) -> Ridge:
+
+def run(
+    train_df: pd.DataFrame,
+    mlflow: mlflow,
+    app_logger: AppLogger = get_disabled_logger(),
+    parent_tracer: Tracer = None,
+) -> Ridge:
     """MLOps training entry point.
 
     Args:
@@ -19,14 +22,14 @@ def run(train_df: pd.DataFrame,
         mlflow (mlflow): mlflow object that is having an active run
                          initiated by mlflow.start_run
         app_logger (monitoring.app_logger.AppLogger): AppLogger object deafult
-                                                      to monitoring.app_logger.get_disabled_logger
+                                        to monitoring.app_logger.get_disabled_logger
         parent_tracer (Tracer): OpenCensus parent tracer for correlation
     Returns:
         Ridge: trained model
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name="Diabetes_Training"
+        component_name = "Diabetes_Training"
 
         # mlflow tracking
         mlflow_run = mlflow.active_run()

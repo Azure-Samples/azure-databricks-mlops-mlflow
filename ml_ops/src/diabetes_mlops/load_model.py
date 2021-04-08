@@ -1,12 +1,14 @@
 import logging
 
 import mlflow
-from sklearn.linear_model import Ridge
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
+from sklearn.linear_model import Ridge
+
 
 def run(
-    mlflow: mlflow, model_version: str = None, 
+    mlflow: mlflow,
+    model_version: str = None,
     model_name: str = "diabetes",
     app_logger: AppLogger = get_disabled_logger(),
     parent_tracer: Tracer = None,
@@ -20,7 +22,7 @@ def run(
         model_name (str, optional): model name in mlflow model registry.
                                     Defaults to "diabetes".
         app_logger (monitoring.app_logger.AppLogger): AppLogger object deafult
-                                                      to monitoring.app_logger.get_disabled_logger
+                                        to monitoring.app_logger.get_disabled_logger
         parent_tracer (Tracer): OpenCensus parent tracer for correlation
     Returns:
         Ridge: trained model
@@ -28,7 +30,7 @@ def run(
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name="Diabetes_Load_Model"
+        component_name = "Diabetes_Load_Model"
         # mlflow tracking
         mlflow_run = mlflow.active_run()
         mlflow_run_id = mlflow_run.info.run_id
@@ -53,7 +55,9 @@ def run(
                 model_name, stages=["None"]
             )
             if len(model_version_object_list) == 0:
-                logger.error(f"There is no Model registered with this name: {model_name}")
+                logger.error(
+                    f"There is no Model registered with this name: {model_name}"
+                )
                 return None
             model_version = model_version_object_list[0].version
 

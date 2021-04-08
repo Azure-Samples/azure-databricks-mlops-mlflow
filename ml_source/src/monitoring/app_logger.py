@@ -1,9 +1,7 @@
 """This module is used to log traces into Azure Application Insights."""
-import functools
 import logging
 import uuid
 from os import getenv
-from typing import Union
 
 from opencensus.ext.azure.common import utils
 from opencensus.ext.azure.log_exporter import AzureLogHandler
@@ -90,8 +88,9 @@ class AppLogger:
 
         Args:
             component_name (str, optional): Name of logger. Defaults to "DiabetesMlOps".
-            custom_dimensions (dict, optional): {"key":"value"} to capture with every log.
-                Defaults to {}.
+            custom_dimensions (dict, optional): {"key":"value"}
+                                                to capture with every log.
+                                                Defaults to {}.
 
         Returns:
             Logger: A logger.
@@ -166,4 +165,3 @@ def get_disabled_logger():
     return AppLogger(
         config={"logging_enabled": "false", "app_insights_key": str(uuid.uuid1())}
     )
-
