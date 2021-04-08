@@ -68,7 +68,7 @@ test: test-ml test-mlops
 
 ## lint all python src and tests
 lint:
-	flake8 --max-line-length=88 ml_ops/src ml_ops/tests ml_source/src ml_source/tests
+	flake8 --max-line-length=88 --count --show-source --statistics ml_ops/src ml_ops/tests ml_source/src ml_source/tests
 
 ## databricks authenticate
 databricks-authenticate:
