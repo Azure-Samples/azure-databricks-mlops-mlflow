@@ -39,6 +39,7 @@ class TestAppLogger(unittest.TestCase):
         """Test with invalid instrumentation key."""
         global test_invalid_instrumentation_key
         with self.assertRaises(Exception):
+            logging.disable(logging.CRITICAL)
             app_logger = AppLogger(
                 config=self.invalid_config,
             )
@@ -48,6 +49,7 @@ class TestAppLogger(unittest.TestCase):
     def test_logger_creation_no_instrumentation_key(self):
         """Test with no instrumentation key."""
         with self.assertRaises(Exception):
+            logging.disable(logging.CRITICAL)
             config = {"log_level": logging.DEBUG, "logging_enabled": "false"}
             app_logger = AppLogger(config=config)
             app_logger.get_logger()
@@ -80,17 +82,27 @@ class TestAppLogger(unittest.TestCase):
             tracer = app_logger.get_tracer(
                 component_name=component_name,
             )
+            tracer_with_parent = app_logger.get_tracer(
+                component_name=component_name, parent_tracer=tracer
+            )
             test_logger = app_logger.get_logger(
                 component_name=component_name,
             )
 
             assert test_logger is not None
             assert tracer is not None
+            assert tracer_with_parent is not None
 
             with tracer.span(name="testspan"):
                 test_logger.info("in test span")
         except Exception:
             assert False
+
+    def test_tracing_with_disabled_logger(self):
+        """Test with no instrumentation key."""
+        app_logger = get_disabled_logger()
+        tracer = app_logger.get_tracer()
+        assert tracer is not None
 
     def test_exception(self):
         """Test for calling logger.exception method."""
