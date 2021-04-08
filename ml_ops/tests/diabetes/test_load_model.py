@@ -1,8 +1,10 @@
 import logging
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
+import mlflow
 from diabetes_mlops.load_model import run
+from sklearn.linear_model import Ridge
 
 
 class TestEvaluateMethods(unittest.TestCase):
@@ -13,15 +15,22 @@ class TestEvaluateMethods(unittest.TestCase):
         level=logging.INFO,
     )
 
-    def test_load_model(self):
+    @patch("mlflow.sklearn.load_model")
+    @patch("mlflow.log_param")
+    @patch("mlflow.active_run")
+    def test_load_model_none_version_patch_mlflow(
+        self, mock_mlflow_active_run, mock_mlflow_log_param, mock_mlflow_load_model
+    ):
         self.logger.info("unittest test_load_model")
-        run(MagicMock(), 1)
-        assert True
+        mock_mlflow_active_run.return_value = MagicMock()
+        mock_mlflow_load_model.return_value = Ridge()
+        model = run(mlflow)
+        assert isinstance(model, Ridge)
 
     def test_load_model_none_version(self):
         self.logger.info("unittest test_load_model")
-        run(MagicMock())
-        assert True
+        model = run(MagicMock())
+        assert model is None
 
     def test_load_model_exception(self):
         self.logger.info("unittest test_load_model exception")
