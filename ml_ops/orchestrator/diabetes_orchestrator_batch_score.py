@@ -243,29 +243,25 @@ except Exception as ex:
 try:
     logger.info("Starting batch scoring result publish to adls")
     with tracer.span("run_scoring_batch"):
-        Path(
-            os.path.join(
-                diabetes_mount_point, "batch_scoring_result", str(mlflow_run_id)
-            )
-        ).mkdir(parents=True, exist_ok=True)
+        result_path = "/".join(
+            ["/dbfs", diabetes_mount_point, "batch_scoring_result", str(mlflow_run_id)]
+        )
+        Path(result_path).mkdir(parents=True, exist_ok=True)
         shutil.copyfile(
             os.path.join(mlflow_log_tmp_dir, "batch_scoring_result.html"),
             os.path.join(
-                diabetes_mount_point,
-                "batch_scoring_result",
-                str(mlflow_run_id),
+                result_path,
                 "batch_scoring_result.html",
             ),
         )
         shutil.copyfile(
             os.path.join(mlflow_log_tmp_dir, "batch_scoring_result.csv"),
             os.path.join(
-                diabetes_mount_point,
-                "batch_scoring_result",
-                str(mlflow_run_id),
+                result_path,
                 "batch_scoring_result.csv",
             ),
         )
+        logger.info(f"Published score result in {result_path}")
 except Exception as ex:
     clean()
     logger.exception(f"ERROR - in batch scoring result publish to adls - {ex}")

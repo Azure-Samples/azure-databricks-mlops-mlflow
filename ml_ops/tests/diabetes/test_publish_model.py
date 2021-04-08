@@ -18,6 +18,12 @@ class TestEvaluateMethods(unittest.TestCase):
         run(MagicMock(), MagicMock())
         assert True
 
+    def test_publish_model_exception(self):
+        self.logger.info("unittest test_publish_model exception")
+        with self.assertRaises(Exception):
+            run(None, None)
+            assert True
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -33,6 +33,12 @@ class TestEvaluateMethods(unittest.TestCase):
         run(model, score_df, MagicMock(), tempfile.mkdtemp())
         assert True
 
+    def test_scoring_batch_exception(self):
+        self.logger.info("unittest test_scoring_batch exception")
+        with self.assertRaises(Exception):
+            run(MagicMock(), MagicMock(), MagicMock(), tempfile.mkdtemp())
+            assert True
+
 
 if __name__ == "__main__":
     unittest.main()

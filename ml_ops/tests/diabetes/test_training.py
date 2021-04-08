@@ -26,6 +26,12 @@ class TestEvaluateMethods(unittest.TestCase):
 
         assert isinstance(model, Ridge)
 
+    def test_training_exception(self):
+        self.logger.info("unittest test_training exception")
+        with self.assertRaises(Exception):
+            model = run(MagicMock(), MagicMock())
+            assert model is not None
+
 
 if __name__ == "__main__":
     unittest.main()
