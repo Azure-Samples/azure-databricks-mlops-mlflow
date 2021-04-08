@@ -243,6 +243,11 @@ except Exception as ex:
 try:
     logger.info("Starting batch scoring result publish to adls")
     with tracer.span("run_scoring_batch"):
+        Path(
+            os.path.join(
+                diabetes_mount_point, "batch_scoring_result", str(mlflow_run_id)
+            )
+        ).mkdir(parents=True, exist_ok=True)
         shutil.copyfile(
             os.path.join(mlflow_log_tmp_dir, "batch_scoring_result.html"),
             os.path.join(
