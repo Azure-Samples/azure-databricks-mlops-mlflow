@@ -111,3 +111,8 @@ This template with samples that provides the following features:
 6. [Databricks Notebook-scoped Python libraries](https://docs.databricks.com/libraries/notebooks-python-libraries.html)
 7. [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/)
 8. [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)
+
+## Glossary
+
+1. Development Team :
+2. Data Science Team :
