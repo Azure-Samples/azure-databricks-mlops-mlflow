@@ -47,7 +47,6 @@ wheel_package_diabetes_mlops_version = dbutils.widgets.get(
 # COMMAND ----------
 
 # Imports
-import logging  # noqa: E402
 import shutil  # noqa: E402
 from pathlib import Path  # noqa: E402
 
@@ -56,6 +55,7 @@ import pandas as pd  # noqa: E402
 from diabetes_mlops.feature_engineering import run as run_feature_engineering  # noqa
 from diabetes_mlops.load_model import run as run_load_model  # noqa: E402
 from diabetes_mlops.scoring_batch import run as run_scoring_batch  # noqa: E402
+from monitoring.app_logger import AppLogger, get_disabled_logger
 
 # COMMAND ----------
 
@@ -73,13 +73,35 @@ mlflow_run = mlflow.active_run()
 mlflow_run_id = mlflow_run.info.run_id
 mlflow_log_tmp_dir = "/tmp/" + str(mlflow_run_id)  # nosec: B108
 Path(mlflow_log_tmp_dir).mkdir(parents=True, exist_ok=True)
-logging.basicConfig(
-    format="%(asctime)s %(module)s %(levelname)s: %(message)s",
-    datefmt="%m/%d/%Y %I:%M:%S %p",
-    level=logging.INFO,
-)
-logging.getLogger("py4j").setLevel(logging.ERROR)
-logger = logging.getLogger(__name__)
+
+# initiate app logger
+app_insights_key = dbutils.secrets.get(
+        scope="azure-databricks-mlops-mlflow", key="app_insights_key"
+    )
+if app_insights_key != '':
+    config = {
+        "app_insights_key":app_insights_key
+    }
+    app_logger = AppLogger(config=config)
+else:
+    app_logger = get_disabled_logger()
+try:
+    logger = app_logger.get_logger(
+        component_name="Batch_Score_Orchestrator",
+        custom_dimensions={
+            "mlflow_run_id": mlflow_run_id,
+            "mlflow_experiment_id": int(mlflow_experiment_id),
+        },
+    )
+    tracer = app_logger.get_tracer(
+        component_name="Batch_Score_Orchestrator",
+    )
+except Exception as ex:
+    print(ex)
+    mlflow.end_run()
+    shutil.rmtree(mlflow_log_tmp_dir, ignore_errors=True)
+    raise Exception(f"ERROR - in initializing app logger - {ex}") from ex
+
 logger.info(f"Stating batch scoring with mlflow run id {mlflow_run_id}")
 
 # COMMAND ----------
@@ -121,36 +143,43 @@ mlflow.log_param("data_raw_cols", raw_data.shape[1])
 
 # Run feature engineering on batch scoring raw data
 logger.info("Stating feature engineering")
-feature_engineered_data = run_feature_engineering(
-    df_input=raw_data,
-    mlflow=mlflow,
-    mlflow_log_tmp_dir=mlflow_log_tmp_dir,
-    explain_features=False,
-)
+with tracer.span("run_feature_engineering"):
+    feature_engineered_data = run_feature_engineering(
+        df_input=raw_data,
+        mlflow=mlflow,
+        mlflow_log_tmp_dir=mlflow_log_tmp_dir,
+        explain_features=False,
+        app_logger=app_logger,
+        parent_tracer=tracer
+    )
 mlflow.log_param("data_feature_engineered_rows", feature_engineered_data.shape[0])
 mlflow.log_param("data_feature_engineered_cols", feature_engineered_data.shape[1])
 
 # COMMAND ----------
 
 # Load published model (latest version)
-if trained_model_version == "":
-    trained_model = run_load_model(
-        mlflow=mlflow, model_version=None, model_name="diabetes"
-    )
-else:
-    trained_model = run_load_model(
-        mlflow=mlflow, model_version=trained_model_version, model_name="diabetes"
-    )
+with tracer.span("run_load_model"):
+    if trained_model_version == "":
+        trained_model = run_load_model(
+            mlflow=mlflow, model_version=None, model_name="diabetes",app_logger=app_logger,parent_tracer=tracer
+        )
+    else:
+        trained_model = run_load_model(
+            mlflow=mlflow, model_version=trained_model_version, model_name="diabetes",app_logger=app_logger,parent_tracer=tracer
+        )
 
 # COMMAND ----------
 
 # Batch scoring
-run_scoring_batch(
-    trained_model=trained_model,
-    df_input=feature_engineered_data,
-    mlflow=mlflow,
-    mlflow_log_tmp_dir=mlflow_log_tmp_dir,
-)
+with tracer.span("run_scoring_batch"):  
+    run_scoring_batch(
+        trained_model=trained_model,
+        df_input=feature_engineered_data,
+        mlflow=mlflow,
+        mlflow_log_tmp_dir=mlflow_log_tmp_dir,
+        app_logger=app_logger,
+        parent_tracer=tracer
+    )
 
 # COMMAND ----------
 
