@@ -53,13 +53,11 @@ install: install-ml install-mlops
 
 ## unit test ml locally
 test-ml: install-ml
-	cd ml_source && python -m unittest discover
 	cd ml_source && coverage run --source=diabetes,monitoring -m unittest discover
 	cd ml_source && coverage report -m
 
 ## unit test mlops locally
 test-mlops: install-mlops
-	cd ml_ops && python -m unittest discover
 	cd ml_ops && coverage run --source=diabetes_mlops -m unittest discover
 	cd ml_ops && coverage report -m
 

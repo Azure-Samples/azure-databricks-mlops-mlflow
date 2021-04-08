@@ -1,9 +1,9 @@
 """Test src/monitoring/app_logger.py."""
 
 import logging
+import unittest
 import uuid
 
-import unittest
 from monitoring.app_logger import AppLogger, get_disabled_logger
 
 test_instrumentation_key = str(uuid.uuid1())
@@ -11,7 +11,6 @@ test_invalid_instrumentation_key = "invalid_instrumentation_key"
 
 
 class TestAppLogger(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.valid_config = {
@@ -25,7 +24,6 @@ class TestAppLogger(unittest.TestCase):
             "app_insights_key": test_invalid_instrumentation_key,
         }
 
-
     def test_logger_creation_valid_instrumentation_key(self):
         """Test with valid formatted instrumentation key."""
         global test_instrumentation_key
@@ -37,7 +35,6 @@ class TestAppLogger(unittest.TestCase):
         except Exception:
             assert False
 
-
     def test_logger_creation_invalid_instrumentation_key(self):
         """Test with invalid instrumentation key."""
         global test_invalid_instrumentation_key
@@ -48,7 +45,6 @@ class TestAppLogger(unittest.TestCase):
             app_logger.get_logger()
             assert app_logger is not None
 
-
     def test_logger_creation_no_instrumentation_key(self):
         """Test with no instrumentation key."""
         with self.assertRaises(Exception):
@@ -56,7 +52,6 @@ class TestAppLogger(unittest.TestCase):
             app_logger = AppLogger(config=config)
             app_logger.get_logger()
             assert app_logger is not None
-
 
     def test_logging(self):
         """Test to use logging functions."""
@@ -73,7 +68,6 @@ class TestAppLogger(unittest.TestCase):
             test_logger.info("Test Logging")
         except Exception:
             assert False
-
 
     def test_tracing(self):
         """Test for Tracer."""
@@ -98,7 +92,6 @@ class TestAppLogger(unittest.TestCase):
         except Exception:
             assert False
 
-
     def test_exception(self):
         """Test for calling logger.exception method."""
         global test_instrumentation_key
@@ -120,7 +113,6 @@ class TestAppLogger(unittest.TestCase):
         except Exception:
             assert False
 
-
     def test_logging_level(self):
         """Test for changing logger level in config."""
         try:
@@ -140,7 +132,6 @@ class TestAppLogger(unittest.TestCase):
         except Exception:
             assert False
 
-
     def test_logging_extra_params(self):
         """Test logging extra params."""
         try:
@@ -156,7 +147,6 @@ class TestAppLogger(unittest.TestCase):
             test_logger.info("Logging extra params", extra=extra_params)
         except Exception:
             assert False
-
 
     def test_disabled_logger(self):
         """Test disabled logger."""
@@ -175,6 +165,5 @@ class TestAppLogger(unittest.TestCase):
             assert False
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-

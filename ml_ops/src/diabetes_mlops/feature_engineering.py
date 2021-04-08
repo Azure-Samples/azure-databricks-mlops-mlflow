@@ -14,6 +14,7 @@ from diabetes.feature_engineering.data_cleansing import (
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
 
+
 def run(
     df_input: pd.DataFrame,
     mlflow: mlflow,
@@ -33,14 +34,14 @@ def run(
         explain_features (bool, optional): explain features, possible only with
                                            training data. Defaults to True.
         app_logger (monitoring.app_logger.AppLogger): AppLogger object deafult
-                                                      to monitoring.app_logger.get_disabled_logger
+                                        to monitoring.app_logger.get_disabled_logger
         parent_tracer (Tracer): OpenCensus parent tracer for correlation
     Returns:
         pd.DataFrame: clean and feature enginered data
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name="Diabetes_Feature_Eng"
+        component_name = "Diabetes_Feature_Eng"
         # mlflow tracking
         mlflow_run = mlflow.active_run()
         mlflow_run_id = mlflow_run.info.run_id
@@ -114,4 +115,3 @@ def run(
     except Exception as exp:
         logger.error("an exception occurred in Feature Eng")
         raise Exception("an exception occurred in Feature Eng") from exp
-

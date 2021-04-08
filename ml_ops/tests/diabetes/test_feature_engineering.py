@@ -28,6 +28,12 @@ class TestEvaluateMethods(unittest.TestCase):
         df_output_numeric = df_output.select_dtypes(include=["float64", "int64"])
         assert df_output_numeric.shape == df_output.shape
 
+    def test_feature_engineering_exception(self):
+        self.logger.info("unittest test_feature_engineering exception")
+        with self.assertRaises(Exception):
+            df_output = run(MagicMock(), MagicMock(), tempfile.mkdtemp())
+            assert df_output is not None
+
 
 if __name__ == "__main__":
     unittest.main()

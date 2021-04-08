@@ -23,6 +23,12 @@ class TestEvaluateMethods(unittest.TestCase):
         run(MagicMock())
         assert True
 
+    def test_load_model_exception(self):
+        self.logger.info("unittest test_load_model exception")
+        with self.assertRaises(Exception):
+            run(None)
+            assert True
+
 
 if __name__ == "__main__":
     unittest.main()

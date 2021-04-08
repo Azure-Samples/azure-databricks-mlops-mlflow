@@ -4,12 +4,14 @@ import tempfile
 
 import mlflow
 from mlflow.entities.model_registry import ModelVersion
-from sklearn.linear_model import Ridge
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
+from sklearn.linear_model import Ridge
+
 
 def run(
-    trained_model: Ridge, mlflow: mlflow, 
+    trained_model: Ridge,
+    mlflow: mlflow,
     model_name: str = "diabetes",
     app_logger: AppLogger = get_disabled_logger(),
     parent_tracer: Tracer = None,
@@ -23,14 +25,14 @@ def run(
         model_name (str, optional): model name in mlflow model registry.
                                     Defaults to "diabetes".
         app_logger (monitoring.app_logger.AppLogger): AppLogger object deafult
-                                                      to monitoring.app_logger.get_disabled_logger
+                                        to monitoring.app_logger.get_disabled_logger
         parent_tracer (Tracer): OpenCensus parent tracer for correlation
     Returns:
         mlflow.entities.model_registry.ModelVersion: registered model details
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name="Diabetes_Publish_Model"
+        component_name = "Diabetes_Publish_Model"
 
         # mlflow tracking
         mlflow_run = mlflow.active_run()

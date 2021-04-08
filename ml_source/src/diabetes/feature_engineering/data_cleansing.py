@@ -61,14 +61,3 @@ def remove_categorical_column(df: pd.DataFrame):
     )
     complete_df = pd.concat([df, df_one_hot], axis=1).drop(["SEX"], axis=1)
     return complete_df
-
-
-def perform_data_cleansing(df: pd.DataFrame):
-    """[Perform data cleansing]
-
-    Args:
-        df ([pd.DataFrame]): [Input dataframe]
-    """
-    df = fill_missing_values(df)
-    df = remove_categorical_column(df)
-    return df
