@@ -64,6 +64,7 @@
         },
         "aiName": {
             "type": "string",
+            "defaultValue": "[concat('ai', uniqueString(parameters('location'), resourceGroup().id))]",
             "metadata": {
                 "description": "Application Insights name."
             }

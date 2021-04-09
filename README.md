@@ -69,7 +69,19 @@ This template with samples that provides the following features:
 1. To trigger training, execute `make run-diabetes-model-training`
 2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
 
+### Observability
+
+[TODO]
+
 **NOTE:** for [deployment](#deployment) and [running](#run-training-and-batch-scoring) the Databricks environment should be created first, for creating a demo environment the [Demo](#demo) chapter can be followed.
+
+## Individual Components
+
+- [ml_data](./ml_data/) - dummy data for sample model
+- [ml_ops](./ml_ops/) - sample MLOps code along with Unit Test cases, orchestrator, deployment setup.
+- [ml_source](./ml_source/) - sample ML code along with Unit Test cases
+- [Makefile](.Makefile) - for build, test in local environment
+- [requirements.txt](./requirements.txt) - python dependencies
 
 ## Demo
 
@@ -95,14 +107,17 @@ This template with samples that provides the following features:
 7. Run Databricks Jobs
    1. To trigger training, execute `make run-diabetes-model-training`
    2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
-
-## Repository Structure
-
-- [ml_data](./ml_data/) - dummy data for sample model
-- [ml_ops](./ml_ops/) - sample MLOps code along with Unit Test cases, orchestrator, deployment setup.
-- [ml_source](./ml_source/) - sample ML code along with Unit Test cases
-- [Makefile](.Makefile) - for build, test in local environment
-- [requirements.txt](./requirements.txt) - python dependencies
+8. Expected results
+   1. Azure resources
+      ![Azure resources](docs/images/result_azure_resources.png)
+   2. Databricks jobs
+      ![Databricks jobs](docs/images/result_databricks_job.png)
+   3. Databricks mlflow experiment
+      ![Databricks mlflow experiment](docs/images/result_mlflow_experiment.png)
+   4. Databricks mlflow model registry
+      ![Databricks mlflow model registry](docs/images/result_mlflow_model_registry.png)
+   5. Output of batch scoring
+      ![Output of batch scoring](docs/images/result_batch_scoring.png)
 
 ## Resources
 
