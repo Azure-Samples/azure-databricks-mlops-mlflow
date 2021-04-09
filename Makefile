@@ -126,7 +126,7 @@ databricks-secrets-put:
 	@read -p "Enter Azure Blob storage Shared Access Key: " shared_access_key; \
 	databricks secrets put --scope azure-databricks-mlops-mlflow --key azure-blob-storage-shared-access-key --string-value $$shared_access_key
 	
-
+## databricks secrets put application insights key
 databricks-add-app-insights-key:
 	$(info Put app insights key)
 	@read -p "Enter App insights key: " app_insights_key; \
@@ -134,6 +134,7 @@ databricks-add-app-insights-key:
 		echo "Setting app insights key : $$app_insights_key "; \
 		databricks secrets put --scope azure-databricks-mlops-mlflow --key app_insights_key --string-value "$$app_insights_key"; \
 	fi; \
+
 ## databricks deploy (upload wheel pacakges to databricks DBFS workspace)
 databricks-deploy-code: dist
 	$(info Upload wheel packages into databricks dbfs root directory)
