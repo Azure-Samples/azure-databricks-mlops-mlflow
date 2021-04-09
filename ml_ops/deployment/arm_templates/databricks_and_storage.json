@@ -61,6 +61,12 @@
             "metadata": {
                 "description": "Enable ADLS Gen2."
             }
+        },
+        "aiName": {
+            "type": "string",
+            "metadata": {
+                "description": "Application Insights name."
+            }
         }
     },
     "variables": {
@@ -101,6 +107,21 @@
                 "name": "[parameters('stgAccountType')]"
             },
             "kind": "[parameters('stgKind')]",
+            "tags": {
+                "Purpose": "Demo",
+                "Project": "azure-databricks-mlops-mlflow"
+            }
+        },
+        {
+            "type": "microsoft.insights/components",
+            "apiVersion": "2014-08-01",
+            "name": "[parameters('aiName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ApplicationId": "[parameters('aiName')]",
+                "Application_Type": "web",
+                "Flow_Type": "Redfield"
+            },
             "tags": {
                 "Purpose": "Demo",
                 "Project": "azure-databricks-mlops-mlflow"

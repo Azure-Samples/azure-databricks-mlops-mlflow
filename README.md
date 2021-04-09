@@ -73,7 +73,7 @@ This template with samples that provides the following features:
 
 ## Demo
 
-1. Create Databricks workspace and a storage account (Azure Data Lake Storage Gen2)
+1. Create Databricks workspace, a storage account (Azure Data Lake Storage Gen2) and Application Insights
    1. Create an [Azure Account](https://azure.microsoft.com/en-in/free/)
    2. [Deploy resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-portal#deploy-resources-from-custom-template) from [custom ARM template](ml_ops/deployment/arm_templates/databricks_and_storage.json)
 2. Initialize Databricks (create cluster, base workspace, mlflow experiment, secret scope)
@@ -87,9 +87,12 @@ This template with samples that provides the following features:
    1. Get Azure Data Lake Storage Gen2 account name created in step 1
    2. Get [Shared Key](https://docs.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key) for Azure Data Lake Storage Gen2 account
    3. Execute `make databricks-secrets-put` to put secret in Databricks secret scope
-5. Package and deploy into Databricks (Databricks Jobs, Orchestrator Notebooks, ML and MLOps Python wheel packages)
+5. Put Application Insights Key as a secret in Databricks secret scope (optional)
+   1. Get [Application Insights Key](https://docs.microsoft.com/en-us/azure/azure-monitor/app/create-new-resource#copy-the-instrumentation-key) created in step 1
+   2. Execute `make databricks-add-app-insights-key` to put secret in Databricks secret scope
+6. Package and deploy into Databricks (Databricks Jobs, Orchestrator Notebooks, ML and MLOps Python wheel packages)
    1. Execute `make deploy`
-6. Run Databricks Jobs
+7. Run Databricks Jobs
    1. To trigger training, execute `make run-diabetes-model-training`
    2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
 
@@ -111,6 +114,7 @@ This template with samples that provides the following features:
 6. [Databricks Notebook-scoped Python libraries](https://docs.microsoft.com/en-us/azure/databricks/libraries/notebooks-python-libraries)
 7. [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/)
 8. [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)
+9. [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
 
 ## Glossaries
 
