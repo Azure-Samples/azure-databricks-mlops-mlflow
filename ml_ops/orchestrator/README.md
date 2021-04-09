@@ -40,11 +40,11 @@ param_value = dbutils.widgets.get("<param_name>")
 ### How to enable %pip magic commands
 
 Starting with Databricks Runtime ML version 6.4 this feature can be enabled when creating a cluster.
-To perform this set `spark.databricks.conda.condaMagic.enabled` to `true` under “Spark Config” (Edit > Advanced Options > Spark).- `[^1]`
+To perform this set `spark.databricks.conda.condaMagic.enabled` to `true` under “Spark Config” (Edit > Advanced Options > Spark).
 
 ### How to install libraries using pip
 
-The following example can be used to install any wheel package stored DBFS folder.
+Libraries are installed as [Notebook-scoped Python libraries](https://docs.microsoft.com/en-us/azure/databricks/libraries/notebooks-python-libraries), example
 
 ```sh
 %pip install dbfs/<path>/<package_name>.whl
@@ -52,36 +52,36 @@ The following example can be used to install any wheel package stored DBFS folde
 
 ## Calling MLOps Python Functions
 
-MLOps Python Functions will be packaged as a wheel package and orchestrator notebook will call the python functions from wheel package. - `[^3]`
+MLOps Python Functions are packaged as a wheel package and orchestrator notebook calls the python functions from wheel package.
 
 ## Execution of Orchestrator
 
-Orchestrator will be executed from DataBricks Job.-`[^3]`
+Orchestrator are executed from DataBricks Job.
 
 ## Error handling
 
-`try..catch` block to handle exceptions -
+For error handling `try..catch` block is used to handle exceptions -
 
 ```py
 try:
-  model = clustering()
+  model = run_training()
 except(Exception ex):
-  logger.error(f"Encountered error: {ex.Message}")
-  dbutils.notebook.exit(f"Encountered error :{ex.Message}")
+  logger.error(f"Encountered error: {ex.Message}") # To log exception in Application Insights
+  raise Exception(f"Encountered error - {ex}") from ex # To fail the Databricks Job Run
 ```
 
 ## Observability
 
-`Opencensus` library is used to capture logs and metrics and send it to Application Insights. - `[^2]`
+[OpenCensus](https://docs.microsoft.com/en-us/azure/azure-monitor/app/opencensus-python) library is used to capture logs and metrics and send it to Application Insights.
 
 ## Secret Management
 
 The following secrets need to be stored in [Databricks Secret Scope](https://docs.microsoft.com/en-us/azure/databricks/security/secrets/):
 
 - Application Insights Instrumentation Key
-- Azure ADLS Gen2 Storage Details
+- Azure ADLS Gen2 Storage Details (account name, container name, shared access key)
 
-The following example can be used to fetch secrets from Databricks Secret Scope.
+Secrets are read using `dbutils.secrets.get`, example
 
 ```py
 secret_value = dbutils.secrets.get(scope = "<scope-name>", key = "<secret-name>")
@@ -89,8 +89,8 @@ secret_value = dbutils.secrets.get(scope = "<scope-name>", key = "<secret-name>"
 
 ## References
 
-1. [Enable pip magic commands](https://databricks.com/blog/2020/06/17/simplify-python-environment-management-on-databricks-runtime-for-machine-learning-using-pip-and-conda.html
+1. [Enable pip magic commands](https://databricks.com/blog/2020/06/17/simplify-python-environment-management-on-databricks-runtime-for-machine-learning-using-pip-and-conda.html)
 2. [OpenCensus](https://docs.microsoft.com/en-us/azure/azure-monitor/app/opencensus-python)
-3. [DataBricks Job API](https://docs.databricks.com/dev-tools/api/latest/jobs.html)
-4. [DataBricks Cluster API](https://docs.databricks.com/dev-tools/api/latest/clusters.html)
-5. [DataBricks CLI](https://docs.databricks.com/dev-tools/cli/index.html)
+3. [DataBricks Job API](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/jobs)
+4. [DataBricks Cluster API](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/clusters)
+5. [DataBricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/)

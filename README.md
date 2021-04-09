@@ -107,12 +107,12 @@ This template with samples that provides the following features:
 2. [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/)
 3. [MLflow Project](https://mlflow.org/docs/latest/projects.html#)
 4. [Run MLflow Projects on Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/projects)
-5. [Databricks Widgets](https://docs.databricks.com/notebooks/widgets.html)
-6. [Databricks Notebook-scoped Python libraries](https://docs.databricks.com/libraries/notebooks-python-libraries.html)
+5. [Databricks Widgets](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/databricks-utils#--widget-utilities)
+6. [Databricks Notebook-scoped Python libraries](https://docs.microsoft.com/en-us/azure/databricks/libraries/notebooks-python-libraries)
 7. [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/)
 8. [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)
 
-## Glossary
+## Glossaries
 
-1. Development Team :
-2. Data Science Team :
+1. [Application developer](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview) : It is a role that work mainly towards operationalize of machine learning.
+2. [Data scientist](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/roles-tasks#structure-of-data-science-groups-and-teams) : It is a role to perform the data science parts of the project
