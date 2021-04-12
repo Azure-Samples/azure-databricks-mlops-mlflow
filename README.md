@@ -81,11 +81,11 @@ This template with samples that provides the following features:
 
 ### Observability
 
-Check Logs, create alerts. etc. in [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview). Following are the few samples to [Kusto Query](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/) logs, traces, exception, etc.
+Check Logs, create alerts. etc. in [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview). Following are the few sample [Kusto Query](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/) to check logs, traces, exception, etc.
 
 - Check for Error, Info, Debug Logs
 
-  Kusto Query `[^7]` for checking general logs for a specific MLflow experiment, filtered by `mlflow_experiment_id`
+  Kusto Query for checking general logs for a specific MLflow experiment, filtered by `mlflow_experiment_id`
 
   ```kusto
     traces
