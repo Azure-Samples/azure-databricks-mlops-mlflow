@@ -1,8 +1,8 @@
-# Azure Databricks MlOps using MLflow
+# Azure Databricks MLOps using MLflow
 
 ## Overview
 
-This is a template or sample for [MlOps](https://github.com/microsoft/mlops) for [Python](https://www.python.org) based source code in [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) using [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/) without using [MLflow Project](https://mlflow.org/docs/latest/projects.html#).
+This is a template or sample for [MLOps](https://github.com/microsoft/mlops) for [Python](https://www.python.org) based source code in [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) using [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/) without using [MLflow Project](https://mlflow.org/docs/latest/projects.html#).
 
 ## Why not MLflow Project
 
@@ -22,7 +22,7 @@ This is a template or sample for [MlOps](https://github.com/microsoft/mlops) for
 
 This template with samples that provides the following features:
 
-- A way to run Python based MlOps without using [MLflow Project](https://mlflow.org/docs/latest/projects.html#), but still using [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/) for managing the end-to-end machine learning lifecycle.
+- A way to run Python based MLOps without using [MLflow Project](https://mlflow.org/docs/latest/projects.html#), but still using [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/) for managing the end-to-end machine learning lifecycle.
 - Sample of machine learning source code structure along with Unit Test cases
 - Sample of MLOps code structure along with Unit Test cases
 - Demo setup to try on users subscription
