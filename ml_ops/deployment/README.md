@@ -35,7 +35,7 @@ Orchestrator DataBricks Job from a [Databricks Job reset template](https://docs.
 databricks jobs reset --job-id <job-id of existing job> --json-file <job-template-file>.json
 ```
 
-## Databricks MLFlow Experiment
+## Databricks MLflow Experiment
 
 MLflow Experiment can be created using [Databricks Workspace Portal](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/tracking#workspace-experiments) or using following CLI commands -
 
