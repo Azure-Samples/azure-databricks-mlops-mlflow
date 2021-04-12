@@ -37,6 +37,14 @@ This template with samples that provides the following features:
 
 ![Batch Scoring](docs/images/batch_scoring.png)
 
+## Individual Components
+
+- [ml_data](./ml_data/) - dummy data for sample model
+- [ml_ops](./ml_ops/) - sample MLOps code along with Unit Test cases, orchestrator, deployment setup.
+- [ml_source](./ml_source/) - sample ML code along with Unit Test cases
+- [Makefile](.Makefile) - for build, test in local environment
+- [requirements.txt](./requirements.txt) - python dependencies
+
 ## Getting Started
 
 ### Prerequisites
@@ -71,6 +79,57 @@ This template with samples that provides the following features:
 
 **NOTE:** for [deployment](#deployment) and [running](#run-training-and-batch-scoring) the Databricks environment should be created first, for creating a demo environment the [Demo](#demo) chapter can be followed.
 
+### Observability
+
+Check Logs, create alerts. etc. in [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview). Following are the few sample [Kusto Query](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/) to check logs, traces, exception, etc.
+
+- Check for Error, Info, Debug Logs
+
+  Kusto Query for checking general logs for a specific MLflow experiment, filtered by `mlflow_experiment_id`
+
+  ```kusto
+    traces
+  | extend mlflow_experiment_id = customDimensions.mlflow_experiment_id
+  | where timestamp > ago(30m) 
+  | where mlflow_experiment_id == <mlflow experiment id>
+  | limit 1000
+  ```
+
+  Kusto Query for checking general logs for a specific Databricks job execution filtered by `mlflow_experiment_id` and `mlflow_run_id`
+
+  ```kusto
+  traces
+  | extend mlflow_run_id = customDimensions.mlflow_run_id
+  | extend mlflow_experiment_id = customDimensions.mlflow_experiment_id
+  | where timestamp > ago(30m) 
+  | where mlflow_experiment_id == <mlflow experiment id>
+  | where mlflow_run_id == "<mlflow run id>"
+  | limit 1000
+  ```
+
+- Check for Exceptions
+
+  Kusto Query for checking exception log if any
+
+  ```kusto
+  exceptions 
+  | where timestamp > ago(30m)
+  | limit 1000
+  ```
+
+- Check for duration of different stages in MLOps
+
+  Sample Kusto Query for checking duration of different stages in MLOps
+
+  ```kusto
+  dependencies 
+  | where timestamp > ago(30m) 
+  | where cloud_RoleName == 'Diabetes_Training'
+  | limit 1000
+  ```
+
+To correlate dependencies, exceptions and traces, `operation_Id` can be used a filter to above Kusto Queries.
+
 ## Demo
 
 1. Create Databricks workspace, a storage account (Azure Data Lake Storage Gen2) and Application Insights
@@ -95,14 +154,17 @@ This template with samples that provides the following features:
 7. Run Databricks Jobs
    1. To trigger training, execute `make run-diabetes-model-training`
    2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
-
-## Repository Structure
-
-- [ml_data](./ml_data/) - dummy data for sample model
-- [ml_ops](./ml_ops/) - sample MLOps code along with Unit Test cases, orchestrator, deployment setup.
-- [ml_source](./ml_source/) - sample ML code along with Unit Test cases
-- [Makefile](.Makefile) - for build, test in local environment
-- [requirements.txt](./requirements.txt) - python dependencies
+8. Expected results
+   1. Azure resources
+      ![Azure resources](docs/images/result_azure_resources.png)
+   2. Databricks jobs
+      ![Databricks jobs](docs/images/result_databricks_job.png)
+   3. Databricks mlflow experiment
+      ![Databricks mlflow experiment](docs/images/result_mlflow_experiment.png)
+   4. Databricks mlflow model registry
+      ![Databricks mlflow model registry](docs/images/result_mlflow_model_registry.png)
+   5. Output of batch scoring
+      ![Output of batch scoring](docs/images/result_batch_scoring.png)
 
 ## Resources
 
@@ -115,6 +177,7 @@ This template with samples that provides the following features:
 7. [Databricks CLI](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/)
 8. [Azure Data Lake Storage Gen2](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)
 9. [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
+10. [Kusto Query Language](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/)
 
 ## Glossaries
 

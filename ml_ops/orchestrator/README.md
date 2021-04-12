@@ -15,7 +15,7 @@ This document covers the design guide of the following orchestrators -
 - It will use `pip magic commands` for managing libraries.
 - It will be executed from a Databricks Job.
 - It will perform logging in Application Insights
-- It will log artifacts, metrics, parameters, trained model into MlFlow.
+- It will log artifacts, metrics, parameters, trained model into MLflow.
 
 ## Parameters
 
