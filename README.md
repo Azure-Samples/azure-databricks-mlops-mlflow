@@ -184,13 +184,13 @@ To correlate dependencies, exceptions and traces, `operation_Id` can be used a f
 1. [Application developer](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/overview) : It is a role that work mainly towards operationalize of machine learning.
 2. [Data scientist](https://docs.microsoft.com/en-us/azure/machine-learning/team-data-science-process/roles-tasks#structure-of-data-science-groups-and-teams) : It is a role to perform the data science parts of the project
 
-### Contributors
+## Contributors
 
-[Julien Chomarat](https://github.com/jchomarat)  
-[Benjamin Guinebertière](https://github.com/benjguin)  
-[Ankit Sinha](https://github.com/ankitbko)  
-[Prabal Deb](https://github.com/prabdeb)  
-[Megha Patil](https://github.com/meghapatilcode)  
-[Srikantan Sankaran](https://github.com/ssrikantan)   
-[Frédéric Le Coquil](https://github.com/flecoqui)  
-[Anand Chugh](https://github.com/anandchugh)
+- [Julien Chomarat](https://github.com/jchomarat)  
+- [Benjamin Guinebertière](https://github.com/benjguin)  
+- [Ankit Sinha](https://github.com/ankitbko)  
+- [Prabal Deb](https://github.com/prabdeb)  
+- [Megha Patil](https://github.com/meghapatilcode)  
+- [Srikantan Sankaran](https://github.com/ssrikantan)   
+- [Frédéric Le Coquil](https://github.com/flecoqui)  
+- [Anand Chugh](https://github.com/anandchugh)
