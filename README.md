@@ -4,20 +4,6 @@
 
 This is a template or sample for [MLOps](https://github.com/microsoft/mlops) for [Python](https://www.python.org) based source code in [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) using [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/) without using [MLflow Project](https://mlflow.org/docs/latest/projects.html#).
 
-## Why not MLflow Project
-
-- [MLflow Project](https://mlflow.org/docs/latest/projects.html#) is a format for packaging data science code in a reusable and reproducible way. It's a perfect fit for several use cases, refer [Run MLflow Projects on Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/projects) for more details.
-- However in some scenarios there are challenges with MLflow Project -
-  - A new Databricks cluster will be created when running a MLflow Project on Databricks. Running Projects against existing clusters is not supported. This might be a problem in scenarios like -
-    - Duration of run will be increased due to creation of cluster each time.
-    - Need access to create Databricks cluster when running a MLflow Project, may not be possible is some restricted environments.
-  - MLflow Project is invoked via `mlflow run` command, that means a machine (that will execute the `mlflow run` command) is needed which should have access to source code repository and Databricks environments, which may not be possible when Databricks is restricted to run behind VPN.
-  - Databricks standard features like [Widgets](https://docs.databricks.com/notebooks/widgets.html), [Notebook-scoped Python libraries](https://docs.databricks.com/libraries/notebooks-python-libraries.html), etc. can not be used in MLflow Project entry point scripts.
-  - Hard to integrate to with other Databricks pipelines (example - data processing pipelines).
-  - Testability of MLOps code (MLflow Project entry point scripts) -
-    - If they are Python scripts, Unit Testing might be hard since they will be outside of a Python package.
-    - Since they are not Databricks Notebook, Integration testing might be challenging.
-
 ## Features
 
 This template with samples that provides the following features:
