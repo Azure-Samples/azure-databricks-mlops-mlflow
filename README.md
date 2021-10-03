@@ -28,7 +28,7 @@ This template with samples that provides the following features:
 - [ml_data](./ml_data/) - dummy data for sample model
 - [ml_ops](./ml_ops/) - sample MLOps code along with Unit Test cases, orchestrator, deployment setup.
 - [ml_source](./ml_source/) - sample ML code along with Unit Test cases
-- [Makefile](.Makefile) - for build, test in local environment
+- [Makefile](./Makefile) - for build, test in local environment
 - [requirements.txt](./requirements.txt) - python dependencies
 
 ## Getting Started
