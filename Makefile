@@ -76,6 +76,7 @@ databricks-authenticate:
 	$(info Follow https://docs.microsoft.com/en-us/azure/databricks/dev-tools/cli/ for getting Host and token value)
 	databricks configure --token
 	$(info Taking Backup of .databrickscfg file in .env/databrickscfg)
+	mkdir -p .env
 	cp ~/.databrickscfg .env/.databrickscfg
 	$(info Creating env script file for mlflow)
 	DATABRICKS_HOST="$$(cat ~/.databrickscfg | grep '^host' | cut -d' ' -f 3)"; \
