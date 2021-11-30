@@ -25,6 +25,7 @@ This template with samples that provides the following features:
 
 ## Individual Components
 
+- [ml_experiment](./ml_experiments/experiment_notebook.ipynb) - sample ML experiment notebook.
 - [ml_data](./ml_data/) - dummy data for sample model
 - [ml_ops](./ml_ops/) - sample MLOps code along with Unit Test cases, orchestrator, deployment setup.
 - [ml_source](./ml_source/) - sample ML code along with Unit Test cases
