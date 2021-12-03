@@ -212,3 +212,9 @@ run-diabetes-batch-scoring:
 	DATABRICKS_ORG_ID="$$(echo $$DATABRICKS_HOST | cut -d'-' -f 2 | cut -d'.' -f 1)"; \
 	echo "Open the following link in browser to check result -"; \
 	echo "$$DATABRICKS_HOST/?o=$$DATABRICKS_ORG_ID/#job/$$BATCH_SCORING_JOB_ID/run/$$RUN_ID"; \
+
+# continuous integration (CI)
+ci: lint test dist
+
+# continuous deployment (CD)
+cd: deploy

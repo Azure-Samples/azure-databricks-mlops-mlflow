@@ -153,6 +153,11 @@ To correlate dependencies, exceptions and traces, `operation_Id` can be used a f
    5. Output of batch scoring
       ![Output of batch scoring](docs/images/result_batch_scoring.png)
 
+## Additional Details
+
+1. [Continuous Integration (CI) & Continuous Deployment (CD)](docs/advance/cicd.md)
+2. [Registered Models Stages and Transitioning](docs/advance/registered_model_stages.md)
+
 ## Resources
 
 1. [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/)
