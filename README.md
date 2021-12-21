@@ -1,17 +1,41 @@
-# Azure Databricks MLOps using MLflow
+---
+page_type: sample
+ms.custom:
+- team=cse
+ms.contributors:
+- prdeb-12/21/2021
+- anchugh-12/21/2021
+languages:
+- python
+products:
+- Azure Databricks
+- Azure Blob Storage
+- Azure Monitor
+---
 
-## Overview
+# Azure Databricks MLOps using MLflow
 
 This is a template or sample for [MLOps](https://github.com/microsoft/mlops) for [Python](https://www.python.org) based source code in [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/) using [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/) without using [MLflow Project](https://mlflow.org/docs/latest/projects.html#).
 
-## Features
-
-This template with samples that provides the following features:
+This template provides the following features:
 
 - A way to run Python based MLOps without using [MLflow Project](https://mlflow.org/docs/latest/projects.html#), but still using [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/) for managing the end-to-end machine learning lifecycle.
 - Sample of machine learning source code structure along with Unit Test cases
 - Sample of MLOps code structure along with Unit Test cases
 - Demo setup to try on users subscription
+
+## Problem Summary
+
+- This demonstrates deployment scenario of [Orchestrate MLOps on Azure Databricks using Databricks Notebook](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/ai/orchestrate-mlops-azure-databricks)
+
+## Products/Technologies/Languages Used
+
+- Products & Technologies:
+  - Azure Databricks
+  - Azure Blob Storage
+  - Azure Monitor
+- Languages:
+  - Python
 
 ## Architecture
 
@@ -158,7 +182,7 @@ To correlate dependencies, exceptions and traces, `operation_Id` can be used a f
 1. [Continuous Integration (CI) & Continuous Deployment (CD)](docs/advance/cicd.md)
 2. [Registered Models Stages and Transitioning](docs/advance/registered_model_stages.md)
 
-## Resources
+## Related resources
 
 1. [Azure Databricks](https://docs.microsoft.com/en-us/azure/databricks/)
 2. [MLflow](https://docs.microsoft.com/en-us/azure/databricks/applications/mlflow/)
