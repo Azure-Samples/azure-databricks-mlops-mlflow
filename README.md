@@ -8,9 +8,9 @@ ms.contributors:
 languages:
 - python
 products:
-- Azure Databricks
-- Azure Blob Storage
-- Azure Monitor
+- azure-databricks
+- azure-blob-storage
+- azure-monitor
 ---
 
 # Azure Databricks MLOps using MLflow
