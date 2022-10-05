@@ -1,4 +1,5 @@
 import logging
+from typing import Dict
 
 import lightgbm as lgb
 import mlflow
@@ -12,6 +13,8 @@ from taxi_fares.training.train import train
 def run(
     train_df: pd.DataFrame,
     mlflow: mlflow,
+    params: Dict = {"num_leaves": 32, "objective": "regression", "metric": "rmse"},
+    num_rounds: int = 100,
     app_logger: AppLogger = get_disabled_logger(),
     parent_tracer: Tracer = None,
 ) -> lgb.Booster:

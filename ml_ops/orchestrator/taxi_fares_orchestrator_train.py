@@ -29,6 +29,11 @@ dbutils.widgets.text("mlflow_experiment_id", "")
 dbutils.widgets.text("wheel_package_dbfs_base_path", "")
 dbutils.widgets.text("wheel_package_taxi_fares_version", "")
 dbutils.widgets.text("wheel_package_taxi_fares_mlops_version", "")
+dbutils.widgets.text("execute_feature_engineering", "true")
+dbutils.widgets.text("training_num_leaves", "32")
+dbutils.widgets.text("training_objective", "regression")
+dbutils.widgets.text("training_metric", "rmse")
+dbutils.widgets.text("training_num_rounds", "100")
 
 # COMMAND ----------
 
@@ -58,15 +63,22 @@ from databricks import feature_store  # noqa: E402
 from databricks.feature_store import FeatureLookup  # noqa: E402
 from monitoring.app_logger import AppLogger, get_disabled_logger  # noqa: E402
 from taxi_fares.utils.pyspark_utils import rounded_taxi_data  # noqa: E402
-from taxi_fares_mlops.feature_engineering import run as run_feature_engineering  # noqa
-from taxi_fares_mlops.publish_model import run as run_publish_model  # noqa: E402
+from taxi_fares_mlops.feature_engineering import \
+    run as run_feature_engineering  # noqa
+from taxi_fares_mlops.publish_model import \
+    run as run_publish_model  # noqa: E402
 from taxi_fares_mlops.training import run as run_training  # noqa: E402
 
 # COMMAND ----------
 
 # Get other parameters
 mlflow_experiment_id = dbutils.widgets.get("mlflow_experiment_id")
+execute_feature_engineering = dbutils.widgets.get("execute_feature_engineering")
 taxi_fares_raw_data = dbutils.widgets.get("taxi_fares_raw_data")
+training_num_leaves = int(dbutils.widgets.get("training_num_leaves"))
+training_objective = dbutils.widgets.get("training_objective")
+training_metric = dbutils.widgets.get("training_metric")
+training_num_rounds = int(dbutils.widgets.get("training_num_rounds"))
 
 # COMMAND ----------
 
@@ -139,24 +151,26 @@ except Exception as ex:
 # COMMAND ----------
 
 # Run feature engineering
-
-try:
-    logger.info("Starting feature engineering")
-    with tracer.span("run_feature_engineering"):
-        feature_engineered_data = run_feature_engineering(
-            df_input=raw_data,
-            start_date=datetime(2016, 1, 1),
-            end_date=datetime(2016, 1, 31),
-            mlflow=mlflow,
-            mlflow_log_tmp_dir=mlflow_log_tmp_dir,
-            explain_features=True,
-            app_logger=app_logger,
-            parent_tracer=tracer,
-        )
-except Exception as ex:
-    clean()
-    logger.exception(f"ERROR - in feature engineering - {ex}")
-    raise Exception(f"ERROR - in feature engineering - {ex}") from ex
+if execute_feature_engineering == "true":
+    try:
+        logger.info("Starting feature engineering")
+        with tracer.span("run_feature_engineering"):
+            feature_engineered_data = run_feature_engineering(
+                df_input=raw_data,
+                start_date=datetime(2016, 1, 1),
+                end_date=datetime(2016, 1, 31),
+                mlflow=mlflow,
+                mlflow_log_tmp_dir=mlflow_log_tmp_dir,
+                explain_features=True,
+                app_logger=app_logger,
+                parent_tracer=tracer,
+            )
+    except Exception as ex:
+        clean()
+        logger.exception(f"ERROR - in feature engineering - {ex}")
+        raise Exception(f"ERROR - in feature engineering - {ex}") from ex
+else:
+    logger.info("Skipping feature engineering")
 
 # COMMAND ----------
 
@@ -166,42 +180,45 @@ except Exception as ex:
 # COMMAND ----------
 
 # Save features to feature store
-try:
-    fs = feature_store.FeatureStoreClient()
+if execute_feature_engineering == "true":
+    try:
+        fs = feature_store.FeatureStoreClient()
 
-    spark.conf.set("spark.sql.shuffle.partitions", "5")
+        spark.conf.set("spark.sql.shuffle.partitions", "5")
 
-    fs.create_table(
-        name="feature_store_taxi_example.trip_pickup_features",
-        primary_keys=["zip", "ts"],
-        df=feature_engineered_data[0],
-        partition_columns="yyyy_mm",
-        description="Taxi Fares. Pickup Features",
-    )
-    fs.create_table(
-        name="feature_store_taxi_example.trip_dropoff_features",
-        primary_keys=["zip", "ts"],
-        df=feature_engineered_data[1],
-        partition_columns="yyyy_mm",
-        description="Taxi Fares. Dropoff Features",
-    )
+        fs.create_table(
+            name="feature_store_taxi_example.trip_pickup_features",
+            primary_keys=["zip", "ts"],
+            df=feature_engineered_data[0],
+            partition_columns="yyyy_mm",
+            description="Taxi Fares. Pickup Features",
+        )
+        fs.create_table(
+            name="feature_store_taxi_example.trip_dropoff_features",
+            primary_keys=["zip", "ts"],
+            df=feature_engineered_data[1],
+            partition_columns="yyyy_mm",
+            description="Taxi Fares. Dropoff Features",
+        )
 
-    # Write the pickup features DataFrame to the feature store table
-    fs.write_table(
-        name="feature_store_taxi_example.trip_pickup_features",
-        df=feature_engineered_data[0],
-        mode="merge",
-    )
-    # Write the dropoff features DataFrame to the feature store table
-    fs.write_table(
-        name="feature_store_taxi_example.trip_dropoff_features",
-        df=feature_engineered_data[1],
-        mode="merge",
-    )
-except Exception as ex:
-    clean()
-    logger.exception(f"ERROR - in feature saving into feature store - {ex}")
-    raise Exception(f"ERROR - in feature saving into feature store - {ex}") from ex
+        # Write the pickup features DataFrame to the feature store table
+        fs.write_table(
+            name="feature_store_taxi_example.trip_pickup_features",
+            df=feature_engineered_data[0],
+            mode="merge",
+        )
+        # Write the dropoff features DataFrame to the feature store table
+        fs.write_table(
+            name="feature_store_taxi_example.trip_dropoff_features",
+            df=feature_engineered_data[1],
+            mode="merge",
+        )
+    except Exception as ex:
+        clean()
+        logger.exception(f"ERROR - in feature saving into feature store - {ex}")
+        raise Exception(f"ERROR - in feature saving into feature store - {ex}") from ex
+else:
+    logger.info("Skipping feature saving into feature store")
 
 # COMMAND ----------
 
@@ -261,9 +278,20 @@ except Exception as ex:
 # Run training
 try:
     logger.info("Starting model training")
+    params = {
+        "num_leaves": training_num_leaves,
+        "objective": training_objective,
+        "metric": training_metric,
+    }
+    num_rounds = training_num_rounds
     with tracer.span("run_training"):
         trained_model = run_training(
-            training_df, mlflow, app_logger=app_logger, parent_tracer=tracer
+            training_df,
+            mlflow,
+            params=params,
+            num_rounds=num_rounds,
+            app_logger=app_logger,
+            parent_tracer=tracer,
         )
 except Exception as ex:
     clean()
