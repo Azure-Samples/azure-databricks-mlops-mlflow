@@ -2,7 +2,7 @@ import logging
 import unittest
 from unittest.mock import MagicMock
 
-from diabetes_mlops.publish_model import run
+from taxi_fares_mlops.publish_model import run
 
 
 class TestEvaluateMethods(unittest.TestCase):

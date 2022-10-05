@@ -180,10 +180,9 @@ else:
 # COMMAND ----------
 
 # Save features to feature store
+fs = feature_store.FeatureStoreClient()
 if execute_feature_engineering == "true":
     try:
-        fs = feature_store.FeatureStoreClient()
-
         spark.conf.set("spark.sql.shuffle.partitions", "5")
 
         fs.create_table(

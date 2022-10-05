@@ -9,7 +9,7 @@ from sklearn.linear_model import Ridge
 def run(
     mlflow: mlflow,
     model_version: str = None,
-    model_name: str = "diabetes",
+    model_name: str = "taxi_fares",
     app_logger: AppLogger = get_disabled_logger(),
     parent_tracer: Tracer = None,
 ) -> Ridge:
