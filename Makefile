@@ -189,7 +189,7 @@ databricks-deploy-jobs: databricks-deploy-code
 deploy: databricks-deploy-jobs
 
 ## run databricks taxi_fares_model_training job
-run-taxi_fares-model-training:
+run-taxi-ares-model-training:
 	$(info Triggering model training job)
 	TRAINING_JOB_ID="$$(databricks jobs list --output json | \
 						jq ".jobs[] | select(.settings.name == \"taxi_fares_model_training\") | .job_id")"; \
@@ -202,7 +202,7 @@ run-taxi_fares-model-training:
 
 	
 ## run databricks taxi_fares_batch_scoring job
-run-taxi_fares-batch-scoring:
+run-taxi-fares-batch-scoring:
 	$(info Triggering batch scoring job)
 	BATCH_SCORING_JOB_ID="$$(databricks jobs list --output json | \
 							 jq ".jobs[] | select(.settings.name == \"taxi_fares_batch_scoring\") | .job_id")"; \
@@ -218,3 +218,9 @@ ci: lint test dist
 
 # continuous deployment (CD)
 cd: deploy
+
+# train model
+train: run-taxi-ares-model-training
+
+# batch scoring
+score: run-taxi-fares-batch-scoring
