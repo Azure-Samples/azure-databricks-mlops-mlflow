@@ -5,6 +5,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/anaconda:0-${VARIANT}
 # Additional packages
 RUN sudo apt-get update
 RUN sudo apt-get install --reinstall build-essential -y
+RUN sudo apt-get install default-jdk -y
 
 # Get local user
 ARG USERNAME=vscode
@@ -22,3 +23,4 @@ RUN conda init bash
 COPY requirements.txt /tmp/pip-tmp/
 RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
     && sudo rm -rf /tmp/pip-tmp
+RUN pip --disable-pip-version-check --no-cache-dir install databricks-feature-store

@@ -1,12 +1,12 @@
 import logging
 
+import lightgbm as lgb
 import mlflow
 import pandas as pd
-from diabetes.training.evaluate import get_model_metrics, split_data
-from diabetes.training.train import train_model
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
-from sklearn.linear_model import Ridge
+from taxi_fares.training.evaluate import get_model_metrics, split_data
+from taxi_fares.training.train import train
 
 
 def run(
@@ -14,7 +14,7 @@ def run(
     mlflow: mlflow,
     app_logger: AppLogger = get_disabled_logger(),
     parent_tracer: Tracer = None,
-) -> Ridge:
+) -> lgb.Booster:
     """MLOps training entry point.
 
     Args:
@@ -29,7 +29,7 @@ def run(
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name = "Diabetes_Training"
+        component_name = "Taxi_Fare_Training"
 
         # mlflow tracking
         mlflow_run = mlflow.active_run()
@@ -49,16 +49,19 @@ def run(
 
         logger.info("Running MLOps training")
 
-        ridge_args = {"alpha": 0.5}
-        mlflow.log_param("training_param_alpha", 0.5)
-        logger.info(f"Defining training parameters {ridge_args}")
+        params = {"num_leaves": 32, "objective": "regression", "metric": "rmse"}
+        num_rounds = 100
+        for k, v in params.items():
+            logger.info(f"Training parameter {k}: {v}")
+            mlflow.log_param("training_param_" + k, v)
+        mlflow.log_param("training_param_num_rounds", num_rounds)
 
         logger.info("Spliting data for train and test")
         data = split_data(train_df)
 
         logger.info("Train the model")
         with tracer.span("train_model"):
-            model = train_model(data["train"], ridge_args)
+            model = train(data["train"], params, num_rounds)
 
         logger.info("Log the metrics for the model")
         metrics = get_model_metrics(model, data["test"])

@@ -2,17 +2,17 @@ import logging
 import os
 import tempfile
 
+import lightgbm as lgb
 import mlflow
 from mlflow.entities.model_registry import ModelVersion
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
-from sklearn.linear_model import Ridge
 
 
 def run(
-    trained_model: Ridge,
+    trained_model: lgb.Booster,
     mlflow: mlflow,
-    model_name: str = "diabetes",
+    model_name: str = "taxi_fares",
     app_logger: AppLogger = get_disabled_logger(),
     parent_tracer: Tracer = None,
 ) -> ModelVersion:
@@ -23,7 +23,7 @@ def run(
         mlflow (mlflow): mlflow object that is having an active run
                          initiated by mlflow.start_run
         model_name (str, optional): model name in mlflow model registry.
-                                    Defaults to "diabetes".
+                                    Defaults to "taxi_fares".
         app_logger (monitoring.app_logger.AppLogger): AppLogger object deafult
                                         to monitoring.app_logger.get_disabled_logger
         parent_tracer (Tracer): OpenCensus parent tracer for correlation
@@ -32,7 +32,7 @@ def run(
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name = "Diabetes_Publish_Model"
+        component_name = "Taxi_Fares_Publish_Model"
 
         # mlflow tracking
         mlflow_run = mlflow.active_run()
@@ -55,7 +55,7 @@ def run(
         temp_model_dir = tempfile.mkdtemp()
         model_path = os.path.join(temp_model_dir, model_name)
         with tracer.span("save_model"):
-            mlflow.sklearn.save_model(trained_model, model_path)
+            mlflow.lightgbm.save_model(trained_model, model_path)
         mlflow.log_artifact(model_path)
         model_uri = "runs:/{run_id}/{artifact_path}".format(
             run_id=mlflow.active_run().info.run_id, artifact_path=model_name

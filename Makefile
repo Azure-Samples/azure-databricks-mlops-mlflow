@@ -53,12 +53,12 @@ install: install-ml install-mlops
 
 ## unit test ml locally
 test-ml: install-ml
-	cd ml_source && coverage run --source=diabetes,monitoring -m unittest discover
+	cd ml_source && coverage run --source=taxi_fares,monitoring -m unittest discover
 	cd ml_source && coverage report -m
 
 ## unit test mlops locally
 test-mlops: install-mlops
-	cd ml_ops && coverage run --source=diabetes_mlops -m unittest discover
+	cd ml_ops && coverage run --source=taxi_fares_mlops -m unittest discover
 	cd ml_ops && coverage report -m
 
 ## unit test all locally
@@ -151,35 +151,35 @@ databricks-deploy-jobs: databricks-deploy-code
 				   jq ".clusters[] | select(.cluster_name == \"azure-databricks-mlops-mlflow\") | .cluster_id")"; \
 	echo "Got existing cluster id: $$CLUSTER_ID"; \
 	TRAINING_JOB_ID="$$(databricks jobs list --output json | \
-						jq ".jobs[] | select(.settings.name == \"diabetes_model_training\") | .job_id")"; \
-	echo "Got existing diabetes_model_training job id: $$TRAINING_JOB_ID"; \
+						jq ".jobs[] | select(.settings.name == \"taxi_fares_model_training\") | .job_id")"; \
+	echo "Got existing taxi_fares_model_training job id: $$TRAINING_JOB_ID"; \
 	if [[ "$$TRAINING_JOB_ID" == "" ]]; then \
-		databricks jobs create --json "{\"name\": \"diabetes_model_training\", \"existing_cluster_id\": $$CLUSTER_ID}"; \
+		databricks jobs create --json "{\"name\": \"taxi_fares_model_training\", \"existing_cluster_id\": $$CLUSTER_ID}"; \
 		TRAINING_JOB_ID="$$(databricks jobs list --output json | \
-							jq ".jobs[] | select(.settings.name == \"diabetes_model_training\") | .job_id")"; \
-		echo "Created diabetes_model_training with job id: $$TRAINING_JOB_ID"; \
+							jq ".jobs[] | select(.settings.name == \"taxi_fares_model_training\") | .job_id")"; \
+		echo "Created taxi_fares_model_training with job id: $$TRAINING_JOB_ID"; \
 	fi; \
 	BATCH_SCORING_JOB_ID="$$(databricks jobs list --output json | \
-							 jq ".jobs[] | select(.settings.name == \"diabetes_batch_scoring\") | .job_id")"; \
-	echo "Got existing diabetes_batch_scoring job id: $$BATCH_SCORING_JOB_ID"; \
+							 jq ".jobs[] | select(.settings.name == \"taxi_fares_batch_scoring\") | .job_id")"; \
+	echo "Got existing taxi_fares_batch_scoring job id: $$BATCH_SCORING_JOB_ID"; \
 	if [[ "$$BATCH_SCORING_JOB_ID" == "" ]]; then \
-		databricks jobs create --json "{\"name\": \"diabetes_batch_scoring\", \"existing_cluster_id\": $$CLUSTER_ID}"; \
+		databricks jobs create --json "{\"name\": \"taxi_fares_batch_scoring\", \"existing_cluster_id\": $$CLUSTER_ID}"; \
 		BATCH_SCORING_JOB_ID="$$(databricks jobs list --output json | \
-								 jq ".jobs[] | select(.settings.name == \"diabetes_batch_scoring\") | .job_id")"; \
-		echo "Created diabetes_batch_scoring with job id: $$BATCH_SCORING_JOB_ID"; \
+								 jq ".jobs[] | select(.settings.name == \"taxi_fares_batch_scoring\") | .job_id")"; \
+		echo "Created taxi_fares_batch_scoring with job id: $$BATCH_SCORING_JOB_ID"; \
 	fi; \
 	MLFLOW_EXPERIMENT_ID="$$(source .env/.databricks_env.sh && mlflow experiments list | \
 							 grep '/azure-databricks-mlops-mlflow/Experiment' | \
 							 cut -d' ' -f 1)"; \
 	echo "Got existing mlflow experiment id: $$MLFLOW_EXPERIMENT_ID"; \
-	echo "Updating diabetes_model_training by using template ml_ops/deployment/databricks/job_template_diabetes_training.json"; \
-	TRAINING_JOB_UPDATE_JSON="$$(cat ml_ops/deployment/databricks/job_template_diabetes_training.json | \
+	echo "Updating taxi_fares_model_training by using template ml_ops/deployment/databricks/job_template_taxi_fares_training.json"; \
+	TRAINING_JOB_UPDATE_JSON="$$(cat ml_ops/deployment/databricks/job_template_taxi_fares_training.json | \
 								 sed "s/\"FILL_JOB_ID\"/$$TRAINING_JOB_ID/" | \
 								 sed "s/FILL_MLFLOW_EXPERIMENT_ID/$$MLFLOW_EXPERIMENT_ID/" | \
 								 sed "s/\"FILL_CLUSTER_ID\"/$$CLUSTER_ID/")"; \
 	databricks jobs reset --job-id $$TRAINING_JOB_ID --json "$$TRAINING_JOB_UPDATE_JSON"; \
-	echo "Updating diabetes_batch_scoring by using template ml_ops/deployment/databricks/job_template_diabetes_batch_scoring.json"; \
-	BATCH_SCORING_JOB_UPDATE_JSON="$$(cat ml_ops/deployment/databricks/job_template_diabetes_batch_scoring.json | \
+	echo "Updating taxi_fares_batch_scoring by using template ml_ops/deployment/databricks/job_template_taxi_fares_batch_scoring.json"; \
+	BATCH_SCORING_JOB_UPDATE_JSON="$$(cat ml_ops/deployment/databricks/job_template_taxi_fares_batch_scoring.json | \
 								 sed "s/\"FILL_JOB_ID\"/$$BATCH_SCORING_JOB_ID/" | \
 								 sed "s/FILL_MLFLOW_EXPERIMENT_ID/$$MLFLOW_EXPERIMENT_ID/" | \
 								 sed "s/\"FILL_CLUSTER_ID\"/$$CLUSTER_ID/")"; \
@@ -188,11 +188,11 @@ databricks-deploy-jobs: databricks-deploy-code
 ## deploy databricks all
 deploy: databricks-deploy-jobs
 
-## run databricks diabetes_model_training job
-run-diabetes-model-training:
+## run databricks taxi_fares_model_training job
+run-taxi_fares-model-training:
 	$(info Triggering model training job)
 	TRAINING_JOB_ID="$$(databricks jobs list --output json | \
-						jq ".jobs[] | select(.settings.name == \"diabetes_model_training\") | .job_id")"; \
+						jq ".jobs[] | select(.settings.name == \"taxi_fares_model_training\") | .job_id")"; \
 	RUN_ID="$$(databricks jobs run-now --job-id $$TRAINING_JOB_ID | \
 			   jq ".number_in_job")"; \
 	DATABRICKS_HOST="$$(cat ~/.databrickscfg | grep '^host' | cut -d' ' -f 3)"; \
@@ -201,11 +201,11 @@ run-diabetes-model-training:
 	echo "$$DATABRICKS_HOST/?o=$$DATABRICKS_ORG_ID/#job/$$TRAINING_JOB_ID/run/$$RUN_ID"; \
 
 	
-## run databricks diabetes_batch_scoring job
-run-diabetes-batch-scoring:
+## run databricks taxi_fares_batch_scoring job
+run-taxi_fares-batch-scoring:
 	$(info Triggering batch scoring job)
 	BATCH_SCORING_JOB_ID="$$(databricks jobs list --output json | \
-							 jq ".jobs[] | select(.settings.name == \"diabetes_batch_scoring\") | .job_id")"; \
+							 jq ".jobs[] | select(.settings.name == \"taxi_fares_batch_scoring\") | .job_id")"; \
 	RUN_ID="$$(databricks jobs run-now --job-id $$BATCH_SCORING_JOB_ID | \
 			   jq ".number_in_job")"; \
 	DATABRICKS_HOST="$$(cat ~/.databrickscfg | grep '^host' | cut -d' ' -f 3)"; \
