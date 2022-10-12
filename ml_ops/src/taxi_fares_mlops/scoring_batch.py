@@ -3,16 +3,16 @@ from pathlib import Path
 
 import mlflow
 import pandas as pd
-from diabetes.scoring.batch.run import batch_scoring
-from diabetes.training.evaluate import get_model_metrics
+import pyspark.sql.functions as func
+from databricks import feature_store
+from mlflow.tracking import MlflowClient
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
-from sklearn.linear_model import Ridge
 
 
 def run(
-    trained_model: Ridge,
-    df_input: pd.DataFrame,
+    trained_model_name: str,
+    score_df: pd.DataFrame,
     mlflow: mlflow,
     mlflow_log_tmp_dir: str,
     app_logger: AppLogger = get_disabled_logger(),
@@ -53,8 +53,47 @@ def run(
 
         logger.info("Running MLOps batch scoring")
         with tracer.span("batch_scoring"):
-            df_input["Y"] = batch_scoring(model=trained_model, df=df_input)
-        df_input.to_html(
+            cols = [
+                "fare_amount",
+                "trip_distance",
+                "pickup_zip",
+                "dropoff_zip",
+                "rounded_pickup_datetime",
+                "rounded_dropoff_datetime",
+            ]
+            score_df_reordered = score_df.select(cols)
+            latest_model_version = _get_latest_model_version(trained_model_name)
+            model_uri = f"models:/{trained_model_name}/{latest_model_version}"
+            fs = feature_store.FeatureStoreClient()
+            predictions = fs.score_batch(model_uri, score_df_reordered)
+            cols = [
+                "prediction",
+                "fare_amount",
+                "trip_distance",
+                "pickup_zip",
+                "dropoff_zip",
+                "rounded_pickup_datetime",
+                "rounded_dropoff_datetime",
+                "mean_fare_window_1h_pickup_zip",
+                "count_trips_window_1h_pickup_zip",
+                "count_trips_window_30m_dropoff_zip",
+                "dropoff_is_weekend",
+            ]
+
+            with_predictions_reordered = (
+                predictions.select(
+                    cols,
+                )
+                .withColumnRenamed(
+                    "prediction",
+                    "predicted_fare_amount",
+                )
+                .withColumn(
+                    "predicted_fare_amount",
+                    func.round("predicted_fare_amount", 2),
+                )
+            )
+        with_predictions_reordered.toPandas().to_html(
             Path(
                 mlflow_log_tmp_dir,
                 "batch_scoring_result.html",
@@ -62,22 +101,24 @@ def run(
             justify="center",
             na_rep="",
         )
-        df_input.to_csv(
+        with_predictions_reordered.toPandas().to_csv(
             Path(
                 mlflow_log_tmp_dir,
                 "batch_scoring_result.csv",
             ),
             index=False,
         )
-
-        X = df_input.drop("Y", axis=1).values
-        y = df_input["Y"].values
-        metrics = get_model_metrics(trained_model, {"X": X, "y": y})
-        for (k, v) in metrics.items():
-            logger.info(f"Metric {k}: {v}")
-            mlflow.log_metric(k, v)
-
         logger.info("Completed MLOps batch scoring")
     except Exception as exp:
         logger.error("an exception occurred in scoring batch")
         raise Exception("an exception occurred in scoring batch") from exp
+
+
+def _get_latest_model_version(model_name: str) -> int:
+    latest_version = 1
+    mlflow_client = MlflowClient()
+    for mv in mlflow_client.search_model_versions(f"name='{model_name}'"):
+        version_int = int(mv.version)
+        if version_int > latest_version:
+            latest_version = version_int
+    return latest_version
