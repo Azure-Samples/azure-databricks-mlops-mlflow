@@ -32,6 +32,8 @@ dbutils.widgets.text("wheel_package_taxi_fares_version", "")
 dbutils.widgets.text("wheel_package_taxi_fares_mlops_version", "")
 dbutils.widgets.text("execute_feature_engineering", "true")
 dbutils.widgets.text("trained_model_version", "")
+dbutils.widgets.text("scoring_data_start_date", "2016-02-01")
+dbutils.widgets.text("training_data_end_date", "2016-02-29")
 
 # COMMAND ----------
 
@@ -72,6 +74,8 @@ execute_feature_engineering = dbutils.widgets.get("execute_feature_engineering")
 taxi_fares_raw_data = dbutils.widgets.get("taxi_fares_raw_data")
 taxi_fares_mount_point = dbutils.widgets.get("taxi_fares_mount_point")
 trained_model_version = dbutils.widgets.get("trained_model_version")
+scoring_data_start_date = dbutils.widgets.get("scoring_data_start_date")
+scoring_data_end_date = dbutils.widgets.get("scoring_data_end_date")
 
 # COMMAND ----------
 
@@ -185,8 +189,8 @@ if execute_feature_engineering == "true":
         with tracer.span("run_feature_engineering"):
             feature_engineered_data = run_feature_engineering(
                 df_input=raw_data,
-                start_date=datetime(2016, 2, 1),
-                end_date=datetime(2016, 2, 29),
+                start_date=datetime.strptime(scoring_data_start_date, "%Y-%m-%d"),
+                end_date=datetime.strptime(scoring_data_end_date, "%Y-%m-%d"),
                 mlflow=mlflow,
                 mlflow_log_tmp_dir=mlflow_log_tmp_dir,
                 explain_features=True,
@@ -254,10 +258,11 @@ try:
     logger.info("Starting batch scoring")
     with tracer.span("run_scoring_batch"):
         run_scoring_batch(
-            trained_model_name="taxi_example_fare_packaged",
+            trained_model_name="taxi_fares",
             score_df=rounded_taxi_data(raw_data),
             mlflow=mlflow,
             mlflow_log_tmp_dir=mlflow_log_tmp_dir,
+            trained_model_version=trained_model_version,
             app_logger=app_logger,
             parent_tracer=tracer,
         )

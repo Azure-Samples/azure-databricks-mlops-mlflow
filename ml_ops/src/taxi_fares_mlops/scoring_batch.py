@@ -5,9 +5,10 @@ import mlflow
 import pandas as pd
 import pyspark.sql.functions as func
 from databricks import feature_store
-from mlflow.tracking import MlflowClient
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
+
+from taxi_fares_mlops.utils import get_latest_model_version
 
 
 def run(
@@ -15,6 +16,7 @@ def run(
     score_df: pd.DataFrame,
     mlflow: mlflow,
     mlflow_log_tmp_dir: str,
+    trained_model_version: str = None,
     app_logger: AppLogger = get_disabled_logger(),
     parent_tracer: Tracer = None,
 ) -> None:
@@ -62,8 +64,13 @@ def run(
                 "rounded_dropoff_datetime",
             ]
             score_df_reordered = score_df.select(cols)
-            latest_model_version = _get_latest_model_version(trained_model_name)
-            model_uri = f"models:/{trained_model_name}/{latest_model_version}"
+            if trained_model_version is None or trained_model_version == "":
+                trained_model_version = get_latest_model_version(trained_model_name)
+            else:
+                trained_model_version = int(trained_model_version)
+            model_uri = f"models:/{trained_model_name}/{trained_model_version}"
+            mlflow.log_param("trained_model_version", trained_model_version)
+            logger.info(f"trained model version {trained_model_version}")
             fs = feature_store.FeatureStoreClient()
             predictions = fs.score_batch(model_uri, score_df_reordered)
             cols = [
@@ -112,13 +119,3 @@ def run(
     except Exception as exp:
         logger.error("an exception occurred in scoring batch")
         raise Exception("an exception occurred in scoring batch") from exp
-
-
-def _get_latest_model_version(model_name: str) -> int:
-    latest_version = 1
-    mlflow_client = MlflowClient()
-    for mv in mlflow_client.search_model_versions(f"name='{model_name}'"):
-        version_int = int(mv.version)
-        if version_int > latest_version:
-            latest_version = version_int
-    return latest_version
