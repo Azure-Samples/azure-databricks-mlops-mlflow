@@ -189,7 +189,7 @@ databricks-deploy-jobs: databricks-deploy-code
 deploy: databricks-deploy-jobs
 
 ## run databricks taxi_fares_model_training job
-run-taxi-ares-model-training:
+run-taxi-fares-model-training:
 	$(info Triggering model training job)
 	TRAINING_JOB_ID="$$(databricks jobs list --output json | \
 						jq ".jobs[] | select(.settings.name == \"taxi_fares_model_training\") | .job_id")"; \

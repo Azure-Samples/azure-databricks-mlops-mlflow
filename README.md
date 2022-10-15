@@ -71,12 +71,12 @@ This template provides the following features:
 2. `cd azure-databricks-mlops-mlflow`
 3. Open cloned repository in Visual Studio Code [Remote Container](https://code.visualstudio.com/docs/remote/containers)
 4. Open a [terminal](https://code.visualstudio.com/docs/remote/containers#_opening-a-terminal) in Remote Container from Visual Studio Code
-5. `make install` to install sample packages (`diabetes` and `diabetes_mlops`) locally
+5. `make install` to install sample packages (`taxi_fares` and `taxi_fares_mlops`) locally
 6. `make test` to Unit Test the code locally
 
 ### Package
 
-1. `make dist` to build wheel Ml and MLOps packages (`diabetes` and `diabetes_mlops`) locally
+1. `make dist` to build wheel Ml and MLOps packages (`taxi_fares` and `taxi_fares_mlops`) locally
 
 ### Deployment
 
@@ -85,8 +85,8 @@ This template provides the following features:
 
 ### Run training and batch scoring
 
-1. To trigger training, execute `make run-diabetes-model-training`
-2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
+1. To trigger training, execute `make run-taxi-fares-model-training`
+2. To trigger batch scoring, execute `make run-taxi-fares-batch-scoring`
 
 **NOTE:** for [deployment](#deployment) and [running](#run-training-and-batch-scoring) the Databricks environment should be created first, for creating a demo environment the [Demo](#demo) chapter can be followed.
 
@@ -151,8 +151,8 @@ To correlate dependencies, exceptions and traces, `operation_Id` can be used a f
    2. Authenticate Databricks CLI `make databricks-authenticate`
    3. Execute `make databricks-init`
 3. Create Azure Data Lake Storage Gen2 Container and upload data
-   1. [Create](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) Azure Data Lake Storage Gen2 Container named - `diabetes`
-   2. [Upload](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#upload-a-block-blob) as blob [diabetes data files](./ml_data/) into Azure Data Lake Storage Gen2 container named - `diabetes`
+   1. [Create](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) Azure Data Lake Storage Gen2 Container named - `taxifares`
+   2. [Upload](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#upload-a-block-blob) as blob [taxi-fares data files](./ml_data/) into Azure Data Lake Storage Gen2 container named - `taxifares`
 4. Put secrets to [Mount ADLS Gen2 Storage using Shared Access Key](https://docs.microsoft.com/en-gb/azure/databricks/data/data-sources/azure/azure-storage)
    1. Get Azure Data Lake Storage Gen2 account name created in step 1
    2. Get [Shared Key](https://docs.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key) for Azure Data Lake Storage Gen2 account
