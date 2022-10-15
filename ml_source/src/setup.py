@@ -20,7 +20,7 @@ required_packages = [
     if package.strip(" ") and "#" not in package
 ]
 setup(
-    name="diabetes",
+    name="taxi_fares",
     version="0.0.1",
     author="",
     author_email="",
