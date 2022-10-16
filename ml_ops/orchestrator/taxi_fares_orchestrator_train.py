@@ -259,12 +259,13 @@ try:
 
     # Create the training set that includes the raw input data merged with
     # corresponding features from both feature tables
-    training_set = fs.create_training_set(
-        rounded_taxi_data(raw_data),
-        feature_lookups=pickup_feature_lookups + dropoff_feature_lookups,
-        label="fare_amount",
-        exclude_columns=exclude_columns,
-    )
+    with tracer.span("create_training_set"):
+        training_set = fs.create_training_set(
+            rounded_taxi_data(raw_data),
+            feature_lookups=pickup_feature_lookups + dropoff_feature_lookups,
+            label="fare_amount",
+            exclude_columns=exclude_columns,
+        )
 
     # Load the TrainingSet into a dataframe which can be passed into
     # sklearn for training a model
