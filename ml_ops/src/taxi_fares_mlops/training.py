@@ -56,14 +56,14 @@ def run(
         num_rounds = 100
         for k, v in params.items():
             logger.info(f"Training parameter {k}: {v}")
-            mlflow.log_param("training_param_" + k, v)
-        mlflow.log_param("training_param_num_rounds", num_rounds)
+        logger.info(f"Training parameter num_rounds: {num_rounds}")
 
-        logger.info("Spliting data for train and test")
+        logger.info("Splitting data for train and test")
         data = split_data(train_df)
 
         logger.info("Train the model")
         with tracer.span("train_model"):
+            mlflow.lightgbm.autolog()
             model = train(data["train"], params, num_rounds)
 
         logger.info("Log the metrics for the model")

@@ -11,6 +11,8 @@
             "wheel_package_taxi_fares_version": "0.0.1",
             "wheel_package_taxi_fares_mlops_version": "0.0.1",
             "execute_feature_engineering": "true",
+            "training_data_end_date": "2016-01-31",
+            "training_data_start_date": "2016-01-01",
             "training_num_leaves": "32",
             "training_objective": "regression",
             "training_metric": "rmse",
