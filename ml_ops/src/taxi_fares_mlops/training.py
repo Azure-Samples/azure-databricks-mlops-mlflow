@@ -13,7 +13,8 @@ from taxi_fares.training.train import train
 def run(
     train_df: pd.DataFrame,
     mlflow: mlflow,
-    params: Dict = {"num_leaves": 32, "objective": "regression", "metric": "rmse"},
+    params: Dict = {"num_leaves": 32,
+                    "objective": "regression", "metric": "rmse"},
     num_rounds: int = 100,
     app_logger: AppLogger = get_disabled_logger(),
     parent_tracer: Tracer = None,
@@ -32,7 +33,7 @@ def run(
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name = "Taxi_Fare_Training"
+        component_name = "Taxi_Fares_Training"
 
         # mlflow tracking
         mlflow_run = mlflow.active_run()
@@ -52,7 +53,8 @@ def run(
 
         logger.info("Running MLOps training")
 
-        params = {"num_leaves": 32, "objective": "regression", "metric": "rmse"}
+        params = {"num_leaves": 32,
+                  "objective": "regression", "metric": "rmse"}
         num_rounds = 100
         for k, v in params.items():
             logger.info(f"Training parameter {k}: {v}")

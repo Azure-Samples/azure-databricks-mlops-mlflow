@@ -1,3 +1,3 @@
 # TESTS
 
-Unit test cases for `diabetes_mlops` MLOps source code.
+Unit test cases for `taxifares_mlops` MLOps source code.

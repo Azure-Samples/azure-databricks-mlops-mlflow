@@ -1,5 +1,5 @@
 # Databricks notebook source
-"""Orchestrator notebook for diabetes training."""
+"""Orchestrator notebook for taxifares training."""
 # Initialization of dbutils to avoid linting errors during developing in vscode
 from pyspark.sql import SparkSession
 
