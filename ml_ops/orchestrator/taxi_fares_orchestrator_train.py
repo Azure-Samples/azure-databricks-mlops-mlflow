@@ -106,22 +106,22 @@ if any(
     app_logger = AppLogger(config=config)
 else:
     app_logger = get_disabled_logger()
-    try:
-        logger = app_logger.get_logger(
-            component_name="Train_Orchestrator",
-            custom_dimensions={
-                "mlflow_run_id": mlflow_run_id,
-                "mlflow_experiment_id": int(mlflow_experiment_id),
-            },
-        )
-        tracer = app_logger.get_tracer(
-            component_name="Train_Orchestrator",
-        )
-    except Exception as ex:
-        print(ex)
-        mlflow.end_run()
-        shutil.rmtree(mlflow_log_tmp_dir, ignore_errors=True)
-        raise Exception(f"ERROR - in initializing app logger - {ex}") from ex
+try:
+    logger = app_logger.get_logger(
+        component_name="Train_Orchestrator",
+        custom_dimensions={
+            "mlflow_run_id": mlflow_run_id,
+            "mlflow_experiment_id": int(mlflow_experiment_id),
+        },
+    )
+    tracer = app_logger.get_tracer(
+        component_name="Train_Orchestrator",
+    )
+except Exception as ex:
+    print(ex)
+    mlflow.end_run()
+    shutil.rmtree(mlflow_log_tmp_dir, ignore_errors=True)
+    raise Exception(f"ERROR - in initializing app logger - {ex}") from ex
 
 logger.info(f"Stating training with mlflow run id {mlflow_run_id}")
 
