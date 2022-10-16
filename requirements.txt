@@ -6,6 +6,6 @@ databricks-cli==0.14.3
 mlflow==1.29.0
 opencensus-ext-azure==1.0.7
 opencensus-ext-logging==0.1.0
-protobuf==3.15.3
+protobuf==3.18.3
 lightgbm==3.3.2
 isort==5.10.1

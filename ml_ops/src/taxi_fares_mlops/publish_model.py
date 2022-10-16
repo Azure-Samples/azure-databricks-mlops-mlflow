@@ -1,16 +1,19 @@
 import logging
-import os
-import tempfile
 
 import lightgbm as lgb
 import mlflow
+from databricks import feature_store
+from databricks.feature_store.training_set import TrainingSet
 from mlflow.entities.model_registry import ModelVersion
 from monitoring.app_logger import AppLogger, get_disabled_logger
 from opencensus.trace.tracer import Tracer
 
+from taxi_fares_mlops.utils import get_latest_model_version
+
 
 def run(
     trained_model: lgb.Booster,
+    training_set: TrainingSet,
     mlflow: mlflow,
     model_name: str = "taxi_fares",
     app_logger: AppLogger = get_disabled_logger(),
@@ -50,29 +53,22 @@ def run(
             component_name=component_name, parent_tracer=parent_tracer
         )
 
-        logger.info("Running MLOps publish model")
-
-        temp_model_dir = tempfile.mkdtemp()
-        model_path = os.path.join(temp_model_dir, model_name)
-        with tracer.span("save_model"):
-            mlflow.lightgbm.save_model(trained_model, model_path)
-        mlflow.log_artifact(model_path)
-        model_uri = "runs:/{run_id}/{artifact_path}".format(
-            run_id=mlflow.active_run().info.run_id, artifact_path=model_name
-        )
-
         logger.info("Publishing trained model into mlflow model registry")
         with tracer.span("register_model"):
-            model_details = mlflow.register_model(model_uri=model_uri, name=model_name)
-        model_version = model_details.version
-
+            fs = feature_store.FeatureStoreClient()
+            fs.log_model(
+                trained_model,
+                artifact_path="model_packaged",
+                flavor=mlflow.lightgbm,
+                training_set=training_set,
+                registered_model_name=model_name,
+            )
+        model_version = get_latest_model_version(model_name)
         mlflow.log_param("model_version", model_version)
         mlflow.log_param("model_name", model_name)
 
         logger.info(f"published model name: {model_name}, version: {model_version}")
         logger.info("Completed MLOps publish model")
-
-        return model_details
     except Exception as exp:
         logger.error("an exception occurred in publish model")
         raise Exception("an exception occurred in publish model") from exp

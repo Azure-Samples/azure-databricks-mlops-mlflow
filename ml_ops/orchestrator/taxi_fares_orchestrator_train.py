@@ -30,6 +30,8 @@ dbutils.widgets.text("wheel_package_dbfs_base_path", "")
 dbutils.widgets.text("wheel_package_taxi_fares_version", "")
 dbutils.widgets.text("wheel_package_taxi_fares_mlops_version", "")
 dbutils.widgets.text("execute_feature_engineering", "true")
+dbutils.widgets.text("training_data_start_date", "2016-01-01")
+dbutils.widgets.text("training_data_end_date", "2016-01-31")
 dbutils.widgets.text("training_num_leaves", "32")
 dbutils.widgets.text("training_objective", "regression")
 dbutils.widgets.text("training_metric", "rmse")
@@ -63,10 +65,8 @@ from databricks import feature_store  # noqa: E402
 from databricks.feature_store import FeatureLookup  # noqa: E402
 from monitoring.app_logger import AppLogger, get_disabled_logger  # noqa: E402
 from taxi_fares.utils.pyspark_utils import rounded_taxi_data  # noqa: E402
-from taxi_fares_mlops.feature_engineering import \
-    run as run_feature_engineering  # noqa
-from taxi_fares_mlops.publish_model import \
-    run as run_publish_model  # noqa: E402
+from taxi_fares_mlops.feature_engineering import run as run_feature_engineering  # noqa
+from taxi_fares_mlops.publish_model import run as run_publish_model  # noqa: E402
 from taxi_fares_mlops.training import run as run_training  # noqa: E402
 
 # COMMAND ----------
@@ -74,6 +74,8 @@ from taxi_fares_mlops.training import run as run_training  # noqa: E402
 # Get other parameters
 mlflow_experiment_id = dbutils.widgets.get("mlflow_experiment_id")
 execute_feature_engineering = dbutils.widgets.get("execute_feature_engineering")
+training_data_start_date = dbutils.widgets.get("training_data_start_date")
+training_data_end_date = dbutils.widgets.get("training_data_end_date")
 taxi_fares_raw_data = dbutils.widgets.get("taxi_fares_raw_data")
 training_num_leaves = int(dbutils.widgets.get("training_num_leaves"))
 training_objective = dbutils.widgets.get("training_objective")
@@ -157,8 +159,8 @@ if execute_feature_engineering == "true":
         with tracer.span("run_feature_engineering"):
             feature_engineered_data = run_feature_engineering(
                 df_input=raw_data,
-                start_date=datetime(2016, 1, 1),
-                end_date=datetime(2016, 1, 31),
+                start_date=datetime.strptime(training_data_start_date, "%Y-%m-%d"),
+                end_date=datetime.strptime(training_data_end_date, "%Y-%m-%d"),
                 mlflow=mlflow,
                 mlflow_log_tmp_dir=mlflow_log_tmp_dir,
                 explain_features=True,
@@ -305,6 +307,7 @@ try:
     with tracer.span("run_publish_model"):
         run_publish_model(
             trained_model=trained_model,
+            training_set=training_set,
             mlflow=mlflow,
             model_name="taxi_fares",
             app_logger=app_logger,
@@ -320,5 +323,3 @@ except Exception as ex:
 # End
 logger.info(f"Completed training with mlflow run id {mlflow_run_id}")
 clean()
-
-# COMMAND ----------
