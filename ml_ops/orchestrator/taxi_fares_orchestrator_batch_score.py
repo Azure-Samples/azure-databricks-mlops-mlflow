@@ -1,5 +1,5 @@
 # Databricks notebook source
-"""Orchestrator notebook for diabetes training."""
+"""Orchestrator notebook for taxifares training."""
 # Initialization of dbutils to avoid linting errors during developing in vscode
 from pyspark.sql import SparkSession
 
@@ -38,7 +38,8 @@ dbutils.widgets.text("training_data_end_date", "2016-02-29")
 # COMMAND ----------
 
 # Get wheel package parameters
-wheel_package_dbfs_base_path = dbutils.widgets.get("wheel_package_dbfs_base_path")
+wheel_package_dbfs_base_path = dbutils.widgets.get(
+    "wheel_package_dbfs_base_path")
 wheel_package_taxi_fares_version = dbutils.widgets.get(
     "wheel_package_taxi_fares_version"
 )
@@ -70,7 +71,8 @@ from taxi_fares_mlops.scoring_batch import run as run_scoring_batch  # noqa: E40
 
 # Get other parameters
 mlflow_experiment_id = dbutils.widgets.get("mlflow_experiment_id")
-execute_feature_engineering = dbutils.widgets.get("execute_feature_engineering")
+execute_feature_engineering = dbutils.widgets.get(
+    "execute_feature_engineering")
 taxi_fares_raw_data = dbutils.widgets.get("taxi_fares_raw_data")
 taxi_fares_mount_point = dbutils.widgets.get("taxi_fares_mount_point")
 trained_model_version = dbutils.widgets.get("trained_model_version")
@@ -80,7 +82,8 @@ scoring_data_end_date = dbutils.widgets.get("scoring_data_end_date")
 # COMMAND ----------
 
 # Initiate mlflow experiment
-mlflow.start_run(experiment_id=int(mlflow_experiment_id), run_name="batch_scoring")
+mlflow.start_run(experiment_id=int(mlflow_experiment_id),
+                 run_name="batch_scoring")
 mlflow_run = mlflow.active_run()
 mlflow_run_id = mlflow_run.info.run_id
 mlflow_log_tmp_dir = "/tmp/" + str(mlflow_run_id)  # nosec: B108
@@ -189,7 +192,8 @@ if execute_feature_engineering == "true":
         with tracer.span("run_feature_engineering"):
             feature_engineered_data = run_feature_engineering(
                 df_input=raw_data,
-                start_date=datetime.strptime(scoring_data_start_date, "%Y-%m-%d"),
+                start_date=datetime.strptime(
+                    scoring_data_start_date, "%Y-%m-%d"),
                 end_date=datetime.strptime(scoring_data_end_date, "%Y-%m-%d"),
                 mlflow=mlflow,
                 mlflow_log_tmp_dir=mlflow_log_tmp_dir,
@@ -246,8 +250,10 @@ if execute_feature_engineering == "true":
         )
     except Exception as ex:
         clean()
-        logger.exception(f"ERROR - in feature saving into feature store - {ex}")
-        raise Exception(f"ERROR - in feature saving into feature store - {ex}") from ex
+        logger.exception(
+            f"ERROR - in feature saving into feature store - {ex}")
+        raise Exception(
+            f"ERROR - in feature saving into feature store - {ex}") from ex
 else:
     logger.info("Skipping feature saving into feature store")
 
@@ -277,7 +283,7 @@ except Exception as ex:
 # Batch scoring result publish
 try:
     logger.info("Starting batch scoring result publish to adls")
-    with tracer.span("run_scoring_batch"):
+    with tracer.span("publish_result"):
         result_path = "/".join(
             [
                 "/dbfs",
@@ -305,7 +311,8 @@ try:
 except Exception as ex:
     clean()
     logger.exception(f"ERROR - in batch scoring result publish to adls - {ex}")
-    raise Exception(f"ERROR - in batch scoring result publish to adls - {ex}") from ex
+    raise Exception(
+        f"ERROR - in batch scoring result publish to adls - {ex}") from ex
 
 
 # COMMAND ----------

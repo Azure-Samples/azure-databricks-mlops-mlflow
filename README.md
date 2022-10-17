@@ -135,7 +135,7 @@ Check Logs, create alerts. etc. in [Application Insights](https://docs.microsoft
   ```kusto
   dependencies 
   | where timestamp > ago(30m) 
-  | where cloud_RoleName == 'Diabetes_Training'
+  | where cloud_RoleName == 'TaxiFares_Training'
   | limit 1000
   ```
 
@@ -163,8 +163,8 @@ To correlate dependencies, exceptions and traces, `operation_Id` can be used a f
 6. Package and deploy into Databricks (Databricks Jobs, Orchestrator Notebooks, ML and MLOps Python wheel packages)
    1. Execute `make deploy`
 7. Run Databricks Jobs
-   1. To trigger training, execute `make run-diabetes-model-training`
-   2. To trigger batch scoring, execute `make run-diabetes-batch-scoring`
+   1. To trigger training, execute `make run-taxifares-model-training`
+   2. To trigger batch scoring, execute `make run-taxifares-batch-scoring`
 8. Expected results
    1. Azure resources
       ![Azure resources](docs/images/result_azure_resources.png)

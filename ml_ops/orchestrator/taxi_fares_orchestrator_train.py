@@ -1,5 +1,5 @@
 # Databricks notebook source
-"""Orchestrator notebook for diabetes training."""
+"""Orchestrator notebook for taxifares training."""
 # Initialization of dbutils to avoid linting errors during developing in vscode
 from pyspark.sql import SparkSession
 
@@ -40,7 +40,8 @@ dbutils.widgets.text("training_num_rounds", "100")
 # COMMAND ----------
 
 # Get wheel package parameters
-wheel_package_dbfs_base_path = dbutils.widgets.get("wheel_package_dbfs_base_path")
+wheel_package_dbfs_base_path = dbutils.widgets.get(
+    "wheel_package_dbfs_base_path")
 wheel_package_taxi_fares_version = dbutils.widgets.get(
     "wheel_package_taxi_fares_version"
 )
@@ -73,7 +74,8 @@ from taxi_fares_mlops.training import run as run_training  # noqa: E402
 
 # Get other parameters
 mlflow_experiment_id = dbutils.widgets.get("mlflow_experiment_id")
-execute_feature_engineering = dbutils.widgets.get("execute_feature_engineering")
+execute_feature_engineering = dbutils.widgets.get(
+    "execute_feature_engineering")
 training_data_start_date = dbutils.widgets.get("training_data_start_date")
 training_data_end_date = dbutils.widgets.get("training_data_end_date")
 taxi_fares_raw_data = dbutils.widgets.get("taxi_fares_raw_data")
@@ -159,7 +161,8 @@ if execute_feature_engineering == "true":
         with tracer.span("run_feature_engineering"):
             feature_engineered_data = run_feature_engineering(
                 df_input=raw_data,
-                start_date=datetime.strptime(training_data_start_date, "%Y-%m-%d"),
+                start_date=datetime.strptime(
+                    training_data_start_date, "%Y-%m-%d"),
                 end_date=datetime.strptime(training_data_end_date, "%Y-%m-%d"),
                 mlflow=mlflow,
                 mlflow_log_tmp_dir=mlflow_log_tmp_dir,
@@ -216,8 +219,10 @@ if execute_feature_engineering == "true":
         )
     except Exception as ex:
         clean()
-        logger.exception(f"ERROR - in feature saving into feature store - {ex}")
-        raise Exception(f"ERROR - in feature saving into feature store - {ex}") from ex
+        logger.exception(
+            f"ERROR - in feature saving into feature store - {ex}")
+        raise Exception(
+            f"ERROR - in feature saving into feature store - {ex}") from ex
 else:
     logger.info("Skipping feature saving into feature store")
 
@@ -242,7 +247,8 @@ try:
     dropoff_feature_lookups = [
         FeatureLookup(
             table_name=dropoff_features_table,
-            feature_names=["count_trips_window_30m_dropoff_zip", "dropoff_is_weekend"],
+            feature_names=["count_trips_window_30m_dropoff_zip",
+                           "dropoff_is_weekend"],
             lookup_key=["dropoff_zip", "rounded_dropoff_datetime"],
         ),
     ]
@@ -253,12 +259,13 @@ try:
 
     # Create the training set that includes the raw input data merged with
     # corresponding features from both feature tables
-    training_set = fs.create_training_set(
-        rounded_taxi_data(raw_data),
-        feature_lookups=pickup_feature_lookups + dropoff_feature_lookups,
-        label="fare_amount",
-        exclude_columns=exclude_columns,
-    )
+    with tracer.span("create_training_set"):
+        training_set = fs.create_training_set(
+            rounded_taxi_data(raw_data),
+            feature_lookups=pickup_feature_lookups + dropoff_feature_lookups,
+            label="fare_amount",
+            exclude_columns=exclude_columns,
+        )
 
     # Load the TrainingSet into a dataframe which can be passed into
     # sklearn for training a model
@@ -272,7 +279,8 @@ try:
 except Exception as ex:
     clean()
     logger.exception(f"ERROR - in feature loading from feature store - {ex}")
-    raise Exception(f"ERROR - in feature loading from feature store - {ex}") from ex
+    raise Exception(
+        f"ERROR - in feature loading from feature store - {ex}") from ex
 
 # COMMAND ----------
 

@@ -41,7 +41,7 @@ def run(
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name = "Taxi_Fare_Feature_Eng"
+        component_name = "Taxi_Fares_Feature_Eng"
         # mlflow tracking
         mlflow_run = mlflow.active_run()
         mlflow_run_id = mlflow_run.info.run_id

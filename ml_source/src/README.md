@@ -4,6 +4,6 @@
 
 Source code for machine learning, based on  -
 
-1. [diabetes](diabetes/) contains machine learning source code.
+1. [taxifares](taxi_fares/) contains machine learning source code.
 2. `monitoring` contains logging class for logging into Application Insights.
 3. The machine python functions will be called from MLOps python functions.

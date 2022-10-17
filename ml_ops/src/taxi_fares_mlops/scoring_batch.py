@@ -36,7 +36,7 @@ def run(
     """
     logger = logging.getLogger(__name__)
     try:
-        component_name = "Diabetes_Scoring_Batch"
+        component_name = "Taxi_Fares_Scoring_Batch"
         # mlflow tracking
         mlflow_run = mlflow.active_run()
         mlflow_run_id = mlflow_run.info.run_id
@@ -65,7 +65,8 @@ def run(
             ]
             score_df_reordered = score_df.select(cols)
             if trained_model_version is None or trained_model_version == "":
-                trained_model_version = get_latest_model_version(trained_model_name)
+                trained_model_version = get_latest_model_version(
+                    trained_model_name)
             else:
                 trained_model_version = int(trained_model_version)
             model_uri = f"models:/{trained_model_name}/{trained_model_version}"
