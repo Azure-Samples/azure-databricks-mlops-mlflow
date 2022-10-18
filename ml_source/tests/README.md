@@ -1,3 +1,3 @@
 # TESTS
 
-Unit test cases for `diabetes` machine learning source code.
+Unit test cases for `taxifares` machine learning source code.

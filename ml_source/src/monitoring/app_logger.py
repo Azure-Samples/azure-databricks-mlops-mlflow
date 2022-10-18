@@ -20,7 +20,8 @@ class CustomDimensionsFilter(logging.Filter):
 
     def filter(self, record):
         """Add the default custom_dimensions into the current log record."""
-        dim = {**self.custom_dimensions, **getattr(record, "custom_dimensions", {})}
+        dim = {**self.custom_dimensions, **
+               getattr(record, "custom_dimensions", {})}
         record.custom_dimensions = dim
         return True
 
@@ -71,7 +72,8 @@ class AppLogger:
         log_exporter = AzureExporter(
             connection_string=app_insights_cs, export_interval=0.0
         )
-        log_exporter.add_telemetry_processor(self._get_callback(component_name))
+        log_exporter.add_telemetry_processor(
+            self._get_callback(component_name))
         return log_exporter
 
     def _initialize_logger(self, log_handler, component_name):
@@ -83,11 +85,11 @@ class AppLogger:
                 logger.addHandler(log_handler)
         return logger
 
-    def get_logger(self, component_name="DiabetesMlOps", custom_dimensions={}):
+    def get_logger(self, component_name="TaxiFaresMlOps", custom_dimensions={}):
         """Get Logger Object.
 
         Args:
-            component_name (str, optional): Name of logger. Defaults to "DiabetesMlOps".
+            component_name (str, optional): Name of logger. Defaults to "TaxiFaresMlOps".
             custom_dimensions (dict, optional): {"key":"value"}
                                                 to capture with every log.
                                                 Defaults to {}.
@@ -96,14 +98,15 @@ class AppLogger:
             Logger: A logger.
         """
         self.update_config(self.config)
-        handler = self._initialize_azure_log_handler(component_name, custom_dimensions)
+        handler = self._initialize_azure_log_handler(
+            component_name, custom_dimensions)
         return self._initialize_logger(handler, component_name)
 
-    def get_tracer(self, component_name="DiabetesMlOps", parent_tracer=None):
+    def get_tracer(self, component_name="TaxiFaresMlOps", parent_tracer=None):
         """Get Tracer Object.
 
         Args:
-            component_name (str, optional): Name of logger. Defaults to "DiabetesMlOps".
+            component_name (str, optional): Name of logger. Defaults to "TaxiFaresMlOps".
             parent_tracer([opencensus.trace.tracer], optional):
                 Contains parent tracer required for setting coorelation.
 
@@ -163,5 +166,6 @@ def get_disabled_logger():
         AppLogger: A disabled AppLogger
     """
     return AppLogger(
-        config={"logging_enabled": "false", "app_insights_key": str(uuid.uuid1())}
+        config={"logging_enabled": "false",
+                "app_insights_key": str(uuid.uuid1())}
     )

@@ -1,0 +1,26 @@
+{
+    "job_id": "FILL_JOB_ID",
+    "name": "taxi_fares_batch_scoring",
+    "existing_cluster_id": "FILL_CLUSTER_ID",
+    "notebook_task": {
+        "notebook_path": "/azure-databricks-mlops-mlflow/taxi_fares_orchestrator_batch_score",
+        "base_parameters": {
+            "taxi_fares_raw_data": "/databricks-datasets/nyctaxi-with-zipcodes/subsampled",
+            "taxi_fares_mount_point": "/mnt/data_batch",
+            "mlflow_experiment_id": "FILL_MLFLOW_EXPERIMENT_ID",
+            "execute_feature_engineering": "true",
+            "scoring_data_start_date": "2016-02-01",
+            "scoring_data_end_date": "2016-02-29",
+            "trained_model_version": "",
+            "wheel_package_dbfs_base_path": "/dbfs/FileStore/libraries/azure-databricks-mlops-mlflow",
+            "wheel_package_taxi_fares_version": "0.0.1",
+            "wheel_package_taxi_fares_mlops_version": "0.0.1"
+        }
+    },
+    "timeout_seconds": 86400,
+    "email_notifications": {
+        "on_start": [],
+        "on_success": [],
+        "on_failure": []
+    }
+}

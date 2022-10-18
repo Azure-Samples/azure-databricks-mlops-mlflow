@@ -17,7 +17,7 @@ required_packages = [
 ]
 
 setup(
-    name="diabetes_mlops",
+    name="taxi_fares_mlops",
     version="0.0.1",
     author="",
     author_email="",

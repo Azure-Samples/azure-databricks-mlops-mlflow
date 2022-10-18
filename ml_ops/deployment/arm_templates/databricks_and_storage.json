@@ -114,18 +114,19 @@
             }
         },
         {
-            "type": "microsoft.insights/components",
-            "apiVersion": "2014-08-01",
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2020-02-02",
             "name": "[parameters('aiName')]",
             "location": "[parameters('location')]",
-            "properties": {
-                "ApplicationId": "[parameters('aiName')]",
-                "Application_Type": "web",
-                "Flow_Type": "Redfield"
-            },
+            "kind": "other",
             "tags": {
                 "Purpose": "Demo",
                 "Project": "azure-databricks-mlops-mlflow"
+            },
+            "properties": {
+                "Application_Type": "web",
+                "Flow_Type": "Bluefield",
+                "Request_Source": "CustomDeployment"
             }
         }
     ],

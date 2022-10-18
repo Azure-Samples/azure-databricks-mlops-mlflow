@@ -4,8 +4,8 @@
 
 This document covers the design guide of the following orchestrators -
 
-1. [diabetes_orchestrator_train.py](diabetes_orchestrator_train.py)
-2. [diabetes_orchestrator_batch_score.py](diabetes_orchestrator_batch_score.py)
+1. [taxi_fares_orchestrator_train.py](taxi_fares_orchestrator_train.py)
+2. [taxi_fares_orchestrator_batch_score.py](taxi_fares_orchestrator_batch_score.py)
 
 ## Considerations
 
